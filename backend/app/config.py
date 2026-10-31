@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     """
     # API Credentials & Model
     gemma_api_key: str = ""
-    gemma_model: str = "gemini-2.5-flash"
+    gemma_model: str = "gemma-4-26b-a4b-it"
 
     # Filesystem Directories
     okf_storage_dir: str = "./data/okf_bundle"
