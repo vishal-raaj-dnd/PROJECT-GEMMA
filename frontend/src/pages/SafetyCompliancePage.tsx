@@ -1,721 +1,627 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { useMecG } from "../context/MecGContext";
+import { TopToolbar } from "../components/workspace/TopToolbar";
 import {
   ShieldAlert,
   ShieldCheck,
   Lock,
+  Unlock,
   AlertTriangle,
   CheckCircle2,
   FileText,
-  UploadCloud,
-  Check,
-  X,
   FileCheck2,
   HardHat,
   Glasses,
   ZapOff,
   Flame,
-  Radio,
-  ExternalLink,
+  Check,
+  X,
+  Printer,
   ChevronRight,
-  Info,
+  ExternalLink,
+  Layers,
+  Sparkles,
+  Search,
   CheckSquare,
   Square
 } from "lucide-react";
 
-interface ManualReviewItem {
+interface IsolationPermit {
   id: string;
-  title: string;
-  equipment: string;
-  manufacturer: string;
-  approvedVersion: string;
-  currentKbVersion: string;
-  status: "Compliant" | "Review Required" | "Outdated";
-  lastAuditDate: string;
-  safetyEngineer: string;
+  asset: string;
+  technician: string;
+  badgeId: string;
+  energyType: string;
+  issuedAt: string;
+  status: "ACTIVE" | "DE-ISOLATED";
 }
 
 export const SafetyCompliancePage: React.FC = () => {
-  const { userRole, showToast } = useMecG();
+  // Active Tab for Right Island
+  const [activeTab, setActiveTab] = useState<"interlocks" | "bulletins" | "permits">("interlocks");
 
-  // Active Tab
-  const [activeTab, setActiveTab] = useState<"loto" | "isolation" | "ppe" | "manuals" | "pending">("loto");
-
-  // Interactive Live Interlock Simulator
-  const [badgeId, setBadgeId] = useState("TECH-8842-OFFSHORE");
-  const [technicianName, setTechnicianName] = useState("Alex Carter");
+  // Selected Equipment Asset
   const [selectedAsset, setSelectedAsset] = useState("Vestas V112 Nacelle Pitch System");
+
+  // Energy Category
+  const [energyType, setEnergyType] = useState<"electrical" | "hydraulic" | "mechanical">("hydraulic");
+
+  // Interactive Live LOTO Simulator Steps
   const [lotoSteps, setLotoSteps] = useState([
-    { id: "1", title: "Notify Affected Personnel", desc: "Inform operators and supervisor of pitch actuator service outage.", checked: true },
-    { id: "2", title: "Emergency Stop Depressed", desc: "Verify turbine e-stop button engaged in base and nacelle.", checked: true },
+    { id: "1", title: "Notify Affected Personnel", desc: "Inform control room operator of pitch actuator service outage.", checked: true },
+    { id: "2", title: "Emergency Stop Engaged", desc: "Verify turbine e-stop button engaged in base and nacelle.", checked: true },
     { id: "3", title: "Energy Isolation (480V ACB Opened)", desc: "Open main circuit breaker CB-480 and discharge bus capacitors.", checked: true },
-    { id: "4", title: "Lockout & Tagout Applied", desc: "Fit Master Lock Series 410 red padlock and Danger tag with Badge ID.", checked: false },
-    { id: "5", title: "Zero-Energy Depressurization Verified", desc: "Bleed hydraulic accumulator manifold to < 5 PSI via valve V-02.", checked: false },
-    { id: "6", title: "Test Zero State", desc: "Attempt manual actuation test to confirm zero mechanical/electrical response.", checked: false },
+    { id: "4", title: "Lockout & Tagout Applied", desc: "Fit Master Lock Series 410 red padlock and Danger tag with Badge ID.", checked: true },
+    { id: "5", title: "Zero-Energy Depressurization Verified", desc: "Bleed hydraulic accumulator manifold to < 5 PSI via bleed valve V-02.", checked: false },
+    { id: "6", title: "Test Zero Mechanical State", desc: "Attempt manual actuation test to confirm zero mechanical/electrical response.", checked: false },
   ]);
 
-  // PPE Checklist State
+  // PPE Checklist
   const [ppeItems, setPpeItems] = useState([
-    { id: "hard_hat", name: "EN 397 Industrial Safety Helmet", required: true, checked: true, icon: HardHat },
-    { id: "safety_glasses", name: "ANSI Z87.1 Safety Eyewear (UV & Impact)", required: true, checked: true, icon: Glasses },
-    { id: "arc_flash", name: "NFPA 70E Arc Flash Face Shield (Category 2)", required: true, checked: true, icon: ZapOff },
-    { id: "electrical_gloves", name: "ASTM D120 Class 0 (1000V) Insulated Gloves", required: true, checked: false, icon: ZapOff },
-    { id: "steel_toe", name: "ASTM F2413 Steel Toe Work Boots (EH Rated)", required: true, checked: true, icon: HardHat },
-    { id: "fall_arrest", name: "EN 361 Full Body Harness with Twin Lanyard", required: true, checked: true, icon: HardHat },
+    { id: "hard_hat", name: "EN 397 Industrial Safety Helmet", checked: true },
+    { id: "safety_glasses", name: "ANSI Z87.1 Safety Eyewear (Impact Rated)", checked: true },
+    { id: "arc_flash", name: "NFPA 70E Arc Flash Face Shield (Category 2)", checked: true },
+    { id: "electrical_gloves", name: "ASTM D120 Class 0 (1000V) Insulated Gloves", checked: false },
+    { id: "steel_toe", name: "ASTM F2413 Steel Toe Work Boots (EH Rated)", checked: true },
   ]);
 
-  // Manufacturer Manual Compliance State (Section 13)
-  const [manualReviews, setManualReviews] = useState<ManualReviewItem[]>([
+  // Active Permits Registry
+  const [permits, setPermits] = useState<IsolationPermit[]>([
     {
-      id: "MAN-01",
-      title: "Vestas V112-3.0 MW Nacelle Hydraulics Maintenance Manual",
-      equipment: "Wind Turbine V112",
-      manufacturer: "Vestas Wind Systems A/S",
-      approvedVersion: "Rev 4.2 (2025-Q4)",
-      currentKbVersion: "Rev 4.2 (2025-Q4)",
-      status: "Compliant",
-      lastAuditDate: "2026-09-15",
-      safetyEngineer: "H. Bauer, CSP",
+      id: "PERMIT-8842-A",
+      asset: "Vestas V112 Nacelle Pitch System",
+      technician: "Alex Carter",
+      badgeId: "TECH-8842-OFFSHORE",
+      energyType: "Hydraulic 210 bar",
+      issuedAt: "2026-10-31 08:30 UTC",
+      status: "ACTIVE",
     },
     {
-      id: "MAN-02",
-      title: "Siemens SGT-400 Dry Gas Seal Depressurization Standard",
-      equipment: "Gas Turbine SGT-400",
-      manufacturer: "Siemens Energy",
-      approvedVersion: "Issue 3.1",
-      currentKbVersion: "Issue 3.0",
-      status: "Review Required",
-      lastAuditDate: "2026-10-01",
-      safetyEngineer: "Pending Sign-off",
-    },
-    {
-      id: "MAN-03",
-      title: "Parker Hannifin D1FP Proportional Valve Service & Torque Bulletin",
-      equipment: "Hydraulic Pitch Actuators",
-      manufacturer: "Parker Hannifin",
-      approvedVersion: "TechBul-2026A",
-      currentKbVersion: "TechBul-2026A",
-      status: "Compliant",
-      lastAuditDate: "2026-10-14",
-      safetyEngineer: "M. Kovacs, PE",
-    },
-    {
-      id: "MAN-04",
-      title: "Caterpillar 3516B Marine Generator LOTO Procedure",
-      equipment: "Emergency Diesel Generator",
-      manufacturer: "Caterpillar Inc.",
-      approvedVersion: "SEBU-8812-04",
-      currentKbVersion: "SEBU-8812-02",
-      status: "Outdated",
-      lastAuditDate: "2026-08-20",
-      safetyEngineer: "Action Needed",
+      id: "PERMIT-7104-E",
+      asset: "Siemens SGT-400 Gas Turbine",
+      technician: "Elena Vance",
+      badgeId: "TECH-3109-ROTATING",
+      energyType: "Electrical 480V",
+      issuedAt: "2026-10-30 14:15 UTC",
+      status: "ACTIVE",
     },
   ]);
 
-  // Incomplete acknowledgements log
-  const [incompleteAcknowledgements] = useState([
-    {
-      id: "INC-991",
-      session: "DIAG-8821",
-      asset: "V112 Nacelle Pitch Valve",
-      technician: "Alex Carter (TECH-8842)",
-      missingGate: "Zero-energy accumulator bleeder valve verification unconfirmed",
-      time: "2026-10-31 08:42",
-      riskLevel: "CRITICAL",
-    },
-    {
-      id: "INC-984",
-      session: "DIAG-8819",
-      asset: "Siemens SGT-400 Lube Oil Skid",
-      technician: "Marcus Vance (TECH-4412)",
-      missingGate: "Arc flash face shield (NFPA 70E Cat 2) not signed off",
-      time: "2026-10-30 16:15",
-      riskLevel: "HIGH",
-    },
-  ]);
+  // Modals
+  const [showPermitModal, setShowPermitModal] = useState(false);
+  const [selectedPermitForView, setSelectedPermitForView] = useState<IsolationPermit | null>(null);
+
+  // New Permit Form Inputs
+  const [newTechnicianName, setNewTechnicianName] = useState("Alex Carter");
+  const [newBadgeId, setNewBadgeId] = useState("TECH-8842-OFFSHORE");
+  const [newPadlockSerial, setNewPadlockSerial] = useState("ML-410-RED-992");
+
+  // Search Filter
+  const [searchQuery, setSearchQuery] = useState("");
 
   const toggleLotoStep = (id: string) => {
     setLotoSteps((prev) =>
-      prev.map((step) => (step.id === id ? { ...step, checked: !step.checked } : step))
+      prev.map((s) => (s.id === id ? { ...s, checked: !s.checked } : s))
     );
   };
 
-  const togglePpe = (id: string) => {
+  const togglePpeItem = (id: string) => {
     setPpeItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item))
+      prev.map((p) => (p.id === id ? { ...p, checked: !p.checked } : p))
     );
   };
 
-  const allLotoCompleted = lotoSteps.every((s) => s.checked);
-  const allPpeCompleted = ppeItems.every((p) => p.checked);
+  const completedLotoCount = lotoSteps.filter((s) => s.checked).length;
+  const isZeroEnergyCertified = completedLotoCount === lotoSteps.length;
 
-  const handleSignLotoGate = () => {
-    if (!badgeId.trim()) {
-      showToast("Technician Badge ID is required to record electronic sign-off.");
-      return;
-    }
-    if (!allLotoCompleted || !allPpeCompleted) {
-      showToast("All mandatory safety and PPE steps must be completed prior to LOTO sign-off.");
-      return;
-    }
-    showToast(`LOTO Safety Interlock electronically signed for ${selectedAsset}. Local audit entry committed.`);
-  };
-
-  const handleApproveManualVersion = (id: string) => {
-    if (userRole !== "Safety Engineer" && userRole !== "Administrator" && userRole !== "Operations Engineer") {
-      showToast("Manual approval requires Safety Engineer or Administrator role privileges.");
-      return;
-    }
-    setManualReviews((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              currentKbVersion: item.approvedVersion,
-              status: "Compliant",
-              lastAuditDate: new Date().toISOString().split("T")[0],
-              safetyEngineer: "Signed by Safety Lead",
-            }
-          : item
-      )
-    );
-    showToast(`Manual ${id} marked as Compliant in Knowledge Base.`);
+  const handleIssuePermit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newPermit: IsolationPermit = {
+      id: `PERMIT-${Math.floor(1000 + Math.random() * 9000)}-${energyType.toUpperCase().slice(0, 3)}`,
+      asset: selectedAsset,
+      technician: newTechnicianName,
+      badgeId: newBadgeId,
+      energyType: energyType === "electrical" ? "Electrical 480V" : energyType === "hydraulic" ? "Hydraulic 210 bar" : "Mechanical",
+      issuedAt: new Date().toISOString().replace("T", " ").slice(0, 16) + " UTC",
+      status: "ACTIVE",
+    };
+    setPermits([newPermit, ...permits]);
+    setShowPermitModal(false);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#252B35]">
-        <div>
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#252B35] text-xs font-mono text-[#F2B544] mb-2">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>REGULATORY SAFETY MANAGEMENT</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">Safety & Compliance</h1>
-          <p className="text-sm text-[#929AA6] mt-1">
-            Enforces OSHA 1910.147 hazardous energy control, verified PPE requirements, and manufacturer manual compliance.
-          </p>
-        </div>
+    <div className="h-screen flex flex-col bg-[#0B0B0C] text-[#F5F7FF] overflow-hidden select-none">
+      {/* Persistent Navigation Toolbar */}
+      <TopToolbar activeModule="safety" title="Safety Compliance & LOTO Interlocks" />
 
-        <div className="flex items-center gap-3">
-          <div className="px-3 py-2 rounded-lg bg-[#171A21] border border-[#252B35] text-right">
-            <div className="text-[10px] font-mono uppercase text-[#929AA6]">Interlock Gate Status</div>
-            <div className="text-xs font-bold text-[#279C70] flex items-center justify-end gap-1 mt-0.5">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              OSHA 1910.147 ACTIVE
+      {/* Floating Island Layout */}
+      <main className="flex-1 p-3 pt-1 flex flex-col gap-3 min-h-0 overflow-hidden">
+        {/* Top KPI Metrics Bar */}
+        <section className="bg-[#18181A] rounded-[24px] border border-[#27272A] px-5 py-3 flex items-center justify-between flex-shrink-0">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                <ShieldAlert className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="text-[10px] font-mono text-[#9CA3AF] uppercase">Compliance Standard</div>
+                <div className="text-xs font-bold text-white">OSHA 29 CFR 1910.147 (LOTO)</div>
+              </div>
+            </div>
+
+            <div className="h-7 w-[1px] bg-[#27272A] hidden sm:block" />
+
+            <div className="hidden sm:block">
+              <div className="text-[10px] font-mono text-[#9CA3AF] uppercase">Active Isolations</div>
+              <div className="text-xs font-bold text-cyan-300 font-mono">
+                {permits.filter((p) => p.status === "ACTIVE").length} Active Permits
+              </div>
+            </div>
+
+            <div className="h-7 w-[1px] bg-[#27272A] hidden md:block" />
+
+            <div className="hidden md:block">
+              <div className="text-[10px] font-mono text-[#9CA3AF] uppercase">Zero-Energy Status</div>
+              <div className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>100% Interlock Enforcement</span>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Navigation Tabs */}
-      <div className="flex border-b border-[#252B35] overflow-x-auto space-x-2">
-        <button
-          onClick={() => setActiveTab("loto")}
-          className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
-            activeTab === "loto"
-              ? "border-[#F2B544] text-[#F2B544]"
-              : "border-transparent text-[#929AA6] hover:text-white"
-          }`}
-        >
-          <Lock className="w-4 h-4" />
-          <span>Lockout / Tagout (LOTO) Interlock</span>
-        </button>
+          <button
+            onClick={() => setShowPermitModal(true)}
+            className="px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-amber-500/20 cursor-pointer"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>Issue Isolation Permit</span>
+          </button>
+        </section>
 
-        <button
-          onClick={() => setActiveTab("isolation")}
-          className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
-            activeTab === "isolation"
-              ? "border-[#F2B544] text-[#F2B544]"
-              : "border-transparent text-[#929AA6] hover:text-white"
-          }`}
-        >
-          <ZapOff className="w-4 h-4" />
-          <span>Energy Isolation Protocols</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("ppe")}
-          className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
-            activeTab === "ppe"
-              ? "border-[#F2B544] text-[#F2B544]"
-              : "border-transparent text-[#929AA6] hover:text-white"
-          }`}
-        >
-          <HardHat className="w-4 h-4" />
-          <span>PPE Requirements Checklist</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("manuals")}
-          className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
-            activeTab === "manuals"
-              ? "border-[#F2B544] text-[#F2B544]"
-              : "border-transparent text-[#929AA6] hover:text-white"
-          }`}
-        >
-          <FileCheck2 className="w-4 h-4" />
-          <span>Approved Manual Versions ({manualReviews.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("pending")}
-          className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${
-            activeTab === "pending"
-              ? "border-[#F2B544] text-[#F2B544]"
-              : "border-transparent text-[#929AA6] hover:text-white"
-          }`}
-        >
-          <ShieldAlert className="w-4 h-4 text-[#D94D4D]" />
-          <span>Incomplete Gates ({incompleteAcknowledgements.length})</span>
-        </button>
-      </div>
-
-      {/* TAB 1: LOCKOUT/TAGOUT PROTOCOL */}
-      {activeTab === "loto" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left: Interactive Sign-off Panel */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="bg-[#171A21] border border-[#252B35] rounded-xl p-6 space-y-5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#D99A29]/15 border border-[#D99A29]/30 flex items-center justify-center text-[#F2B544]">
-                    <Lock className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-white">OSHA 1910.147 LOTO Verification</h3>
-                    <p className="text-xs font-mono text-[#929AA6]">The Control of Hazardous Energy Protocol</p>
-                  </div>
+        {/* 2-Column Workstation Islands */}
+        <div className="flex-1 flex gap-3 min-h-0 overflow-hidden">
+          {/* Left Island: Hazardous Energy Isolation Simulator */}
+          <section className="w-[450px] lg:w-[490px] flex-shrink-0 bg-[#18181A] rounded-[24px] border border-[#27272A] p-4 flex flex-col justify-between overflow-y-auto custom-scrollbar">
+            <div className="space-y-4">
+              {/* Header */}
+              <div className="pb-3 border-b border-[#27272A] flex items-center justify-between">
+                <div>
+                  <h2 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-amber-400" />
+                    <span>LOTO Procedure Simulator</span>
+                  </h2>
+                  <p className="text-[10px] text-[#9CA3AF]">Zero-Energy Verification Protocol</p>
                 </div>
-                <span className="px-2.5 py-1 rounded bg-[#252B35] text-[11px] font-mono text-[#F2B544]">
-                  MANDATORY SAFETY GATE
+                <span className="text-[10px] font-mono text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
+                  {completedLotoCount}/6 Verified
                 </span>
               </div>
 
               {/* Asset Selector */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-mono uppercase text-[#929AA6]">Equipment Asset Tag</label>
-                <input
-                  type="text"
+              <div>
+                <label className="block text-[11px] font-medium text-[#9CA3AF] mb-1.5">Target Equipment Asset</label>
+                <select
                   value={selectedAsset}
                   onChange={(e) => setSelectedAsset(e.target.value)}
-                  className="w-full bg-[#101318] border border-[#252B35] rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-[#F2B544]"
-                />
+                  className="w-full bg-[#141518] border border-[#27272A] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#22D3EE] transition-colors"
+                >
+                  <option value="Vestas V112 Nacelle Pitch System">Vestas V112 Nacelle Pitch System</option>
+                  <option value="Hydraulic HPU-350 Primary Loop">Hydraulic HPU-350 Primary Loop</option>
+                  <option value="Siemens SGT-400 Gas Turbine">Siemens SGT-400 Gas Turbine</option>
+                </select>
               </div>
 
-              {/* LOTO Checklist Steps */}
-              <div className="space-y-3">
-                <label className="text-xs font-mono uppercase text-[#929AA6]">
-                  Sequential Isolation Verification Steps ({lotoSteps.filter((s) => s.checked).length}/{lotoSteps.length})
-                </label>
-                <div className="space-y-2">
-                  {lotoSteps.map((step) => (
-                    <div
-                      key={step.id}
-                      onClick={() => toggleLotoStep(step.id)}
-                      className={`p-3.5 rounded-lg border cursor-pointer transition-all flex items-start gap-3 ${
-                        step.checked
-                          ? "bg-[#279C70]/10 border-[#279C70]/40 text-white"
-                          : "bg-[#101318] border-[#252B35] text-[#929AA6] hover:border-[#F2B544]/50"
-                      }`}
-                    >
-                      <div className="mt-0.5">
-                        {step.checked ? (
-                          <CheckSquare className="w-4 h-4 text-[#279C70]" />
-                        ) : (
-                          <Square className="w-4 h-4 text-[#929AA6]" />
-                        )}
+              {/* Energy Hazard Tabs */}
+              <div>
+                <label className="block text-[11px] font-medium text-[#9CA3AF] mb-1.5">Hazardous Energy Source</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    onClick={() => setEnergyType("hydraulic")}
+                    className={`py-1.5 px-2 rounded-xl text-xs font-medium border transition-colors cursor-pointer text-center ${
+                      energyType === "hydraulic"
+                        ? "bg-[#24252B] border-[#22D3EE] text-white"
+                        : "bg-[#141518] border-[#27272A] text-[#9CA3AF] hover:text-white"
+                    }`}
+                  >
+                    Hydraulic (210 bar)
+                  </button>
+                  <button
+                    onClick={() => setEnergyType("electrical")}
+                    className={`py-1.5 px-2 rounded-xl text-xs font-medium border transition-colors cursor-pointer text-center ${
+                      energyType === "electrical"
+                        ? "bg-[#24252B] border-[#FBBF24] text-white"
+                        : "bg-[#141518] border-[#27272A] text-[#9CA3AF] hover:text-white"
+                    }`}
+                  >
+                    Electrical (480V)
+                  </button>
+                  <button
+                    onClick={() => setEnergyType("mechanical")}
+                    className={`py-1.5 px-2 rounded-xl text-xs font-medium border transition-colors cursor-pointer text-center ${
+                      energyType === "mechanical"
+                        ? "bg-[#24252B] border-[#8B5CF6] text-white"
+                        : "bg-[#141518] border-[#27272A] text-[#9CA3AF] hover:text-white"
+                    }`}
+                  >
+                    Mechanical
+                  </button>
+                </div>
+              </div>
+
+              {/* Interactive LOTO Checklist */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] font-medium text-[#9CA3AF]">
+                  <span>Mandatory Isolation Sequence</span>
+                  <span className="text-[10px] font-mono text-amber-400">Strict Order</span>
+                </div>
+
+                {lotoSteps.map((step) => (
+                  <div
+                    key={step.id}
+                    onClick={() => toggleLotoStep(step.id)}
+                    className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+                      step.checked
+                        ? "bg-emerald-950/15 border-emerald-500/30 text-white"
+                        : "bg-[#141518] border-[#27272A] text-[#9CA3AF] hover:border-[#3A3B43]"
+                    }`}
+                  >
+                    <div className="flex items-start gap-2.5">
+                      <div
+                        className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 text-xs ${
+                          step.checked ? "bg-emerald-500 text-black font-bold" : "border border-[#27272A] text-[#9CA3AF]"
+                        }`}
+                      >
+                        {step.checked ? <Check className="w-3 h-3" /> : step.id}
                       </div>
-                      <div className="flex-1">
-                        <div className="text-xs font-bold text-white flex items-center justify-between">
-                          <span>{step.title}</span>
-                          <span className="font-mono text-[10px] text-[#929AA6]">STEP {step.id}</span>
+                      <div className="text-xs">
+                        <div className={`font-semibold ${step.checked ? "text-white" : "text-[#D1D5DB]"}`}>
+                          {step.title}
                         </div>
-                        <p className="text-xs text-[#929AA6] mt-0.5">{step.desc}</p>
+                        <div className="text-[11px] text-[#6B7280] mt-0.5 leading-snug">
+                          {step.desc}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* PPE Mandatory Equipment */}
+              <div className="bg-[#141518] border border-[#27272A] rounded-xl p-3 space-y-2">
+                <span className="text-[11px] font-medium text-[#9CA3AF] block mb-1">
+                  Mandatory PPE Checklist (OSHA 1910 Subpart I)
+                </span>
+                <div className="space-y-1.5">
+                  {ppeItems.map((item) => (
+                    <label key={item.id} className="flex items-center gap-2 cursor-pointer text-xs">
+                      <input
+                        type="checkbox"
+                        checked={item.checked}
+                        onChange={() => togglePpeItem(item.id)}
+                        className="w-3.5 h-3.5 rounded bg-[#18181A] border-[#27272A] accent-[#22D3EE]"
+                      />
+                      <span className={item.checked ? "text-white" : "text-[#6B7280]"}>{item.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Zero-Energy Status Pill */}
+            <div className="pt-3 border-t border-[#27272A]">
+              <div
+                className={`p-3 rounded-xl border flex items-center justify-between text-xs font-semibold ${
+                  isZeroEnergyCertified
+                    ? "bg-emerald-950/20 border-emerald-500/30 text-emerald-400"
+                    : "bg-amber-950/20 border-amber-500/30 text-amber-400"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {isZeroEnergyCertified ? <ShieldCheck className="w-4 h-4" /> : <ShieldAlert className="w-4 h-4" />}
+                  <span>{isZeroEnergyCertified ? "Zero-Energy Verified (Ready for Servicing)" : "Zero-Energy Pending Verification"}</span>
+                </div>
+                <span className="text-[10px] font-mono">{isZeroEnergyCertified ? "PASS" : "INTERLOCKED"}</span>
+              </div>
+            </div>
+          </section>
+
+          {/* Right Island: Interlock Registry, OEM Bulletins, and Permits */}
+          <section className="flex-1 bg-[#18181A] rounded-[24px] border border-[#27272A] p-5 flex flex-col overflow-hidden">
+            {/* Header Tabs */}
+            <div className="flex items-center justify-between pb-3 border-b border-[#27272A]">
+              <div className="flex items-center gap-2 bg-[#141518] p-1 rounded-xl border border-[#27272A]">
+                <button
+                  onClick={() => setActiveTab("interlocks")}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                    activeTab === "interlocks" ? "bg-[#24252B] text-white shadow-sm" : "text-[#9CA3AF] hover:text-white"
+                  }`}
+                >
+                  Interlock Registry
+                </button>
+                <button
+                  onClick={() => setActiveTab("permits")}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                    activeTab === "permits" ? "bg-[#24252B] text-white shadow-sm" : "text-[#9CA3AF] hover:text-white"
+                  }`}
+                >
+                  Active Permits ({permits.length})
+                </button>
+                <button
+                  onClick={() => setActiveTab("bulletins")}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                    activeTab === "bulletins" ? "bg-[#24252B] text-white shadow-sm" : "text-[#9CA3AF] hover:text-white"
+                  }`}
+                >
+                  OEM Bulletins
+                </button>
+              </div>
+
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#6B7280]" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search safety records..."
+                  className="bg-[#141518] border border-[#27272A] rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-[#6B7280] focus:outline-none focus:border-[#22D3EE] transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Content Based on Active Tab */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar mt-3 space-y-3">
+              {activeTab === "interlocks" && (
+                <div className="space-y-3">
+                  <div className="p-4 rounded-2xl bg-[#141518] border border-[#27272A]">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-mono font-bold">
+                        CRITICAL SAFETY INTERLOCK #INT-480-ACB
+                      </span>
+                      <span className="text-[10px] font-mono text-[#9CA3AF]">OKF: lockout_tagout_hydraulics.md</span>
+                    </div>
+                    <h4 className="text-sm font-bold text-white">Main Nacelle 480V ACB Energy Isolation Gate</h4>
+                    <p className="text-xs text-[#9CA3AF] mt-1 leading-relaxed">
+                      Requires padlocking main air circuit breaker in open position before opening proportional valve manifold housing. Interlocked via deterministic AST rule.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-[#141518] border border-[#27272A]">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 text-[10px] font-mono font-bold">
+                        HYDRAULIC PRESSURE BLEED #INT-HYD-02
+                      </span>
+                      <span className="text-[10px] font-mono text-[#9CA3AF]">OKF: proportional_relief_valve_v2.md</span>
+                    </div>
+                    <h4 className="text-sm font-bold text-white">Proportional Relief Valve Accumulator Depressurization</h4>
+                    <p className="text-xs text-[#9CA3AF] mt-1 leading-relaxed">
+                      Accumulator pressure must drop below 5 PSI on manifold gauge G-01 before loosening collar bolts. Calibrated torque wrench required upon reassembly (45 Nm).
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-[#141518] border border-[#27272A]">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 text-[10px] font-mono font-bold">
+                        ARC FLASH GATE #INT-ARC-LVL2
+                      </span>
+                      <span className="text-[10px] font-mono text-[#9CA3AF]">OKF: arc_flash_ppe_level2.md</span>
+                    </div>
+                    <h4 className="text-sm font-bold text-white">Pitch Control PCB Bus Capacitor Isolation</h4>
+                    <p className="text-xs text-[#9CA3AF] mt-1 leading-relaxed">
+                      Capacitors retain lethal 600V DC charge for 10 minutes following main breaker trip. Mandatory 10-minute wait and multimeter zero-voltage check before panel access.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "permits" && (
+                <div className="space-y-2.5">
+                  {permits.map((p) => (
+                    <div
+                      key={p.id}
+                      onClick={() => setSelectedPermitForView(p)}
+                      className="p-3.5 rounded-2xl bg-[#141518] hover:bg-[#1E1F24] border border-[#27272A] hover:border-[#3A3B43] transition-all cursor-pointer flex items-center justify-between text-xs"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-cyan-400">{p.id}</span>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono text-[9px]">
+                            {p.status}
+                          </span>
+                        </div>
+                        <div className="text-white font-semibold">{p.asset}</div>
+                        <div className="text-[10px] font-mono text-[#9CA3AF]">
+                          Technician: {p.technician} ({p.badgeId}) • {p.energyType}
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <span className="text-[10px] font-mono text-[#6B7280] block">{p.issuedAt}</span>
+                        <span className="text-xs text-[#22D3EE] font-medium hover:underline inline-flex items-center gap-1 mt-1">
+                          View Details <ExternalLink className="w-2.5 h-2.5" />
+                        </span>
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
+              )}
 
-              {/* Technician Sign-Off Credentials */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#252B35]">
-                <div>
-                  <label className="text-[10px] font-mono uppercase text-[#929AA6]">Technician Name</label>
-                  <input
-                    type="text"
-                    value={technicianName}
-                    onChange={(e) => setTechnicianName(e.target.value)}
-                    className="w-full bg-[#101318] border border-[#252B35] rounded-lg px-3 py-1.5 text-xs text-white mt-1 focus:outline-none focus:border-[#F2B544]"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-mono uppercase text-[#929AA6]">Lockout Badge ID</label>
-                  <input
-                    type="text"
-                    value={badgeId}
-                    onChange={(e) => setBadgeId(e.target.value)}
-                    className="w-full bg-[#101318] border border-[#252B35] rounded-lg px-3 py-1.5 text-xs font-mono text-white mt-1 focus:outline-none focus:border-[#F2B544]"
-                  />
-                </div>
-              </div>
-
-              {/* Action Button */}
-              <button
-                onClick={handleSignLotoGate}
-                disabled={!allLotoCompleted}
-                className={`w-full py-3 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 ${
-                  allLotoCompleted
-                    ? "bg-[#F2B544] hover:bg-[#F2B544]/90 text-[#101318] shadow-lg shadow-[#F2B544]/20 cursor-pointer"
-                    : "bg-[#252B35] text-[#929AA6] cursor-not-allowed"
-                }`}
-              >
-                <Lock className="w-4 h-4" />
-                <span>
-                  {allLotoCompleted
-                    ? "Electronically Sign & Commit LOTO Interlock"
-                    : `Complete All Steps to Unlock Sign-off (${lotoSteps.filter((s) => !s.checked).length} remaining)`}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Right: Regulatory Background & Interlock Architecture */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="bg-[#171A21] border border-[#252B35] rounded-xl p-6 space-y-4">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-[#D99A29]" />
-                <span>Mandatory Safety Gate Enforcement</span>
-              </h3>
-              <p className="text-xs text-[#929AA6] leading-relaxed">
-                In industrial field engineering, unverified procedures risk arc flashes, explosive hydraulic line ruptures, or mechanical pinch events.
-              </p>
-              <div className="p-3.5 rounded-lg bg-[#101318] border border-[#252B35] space-y-2 text-xs">
-                <div className="font-bold text-white flex items-center gap-2">
-                  <ShieldAlert className="w-3.5 h-3.5 text-[#D94D4D]" />
-                  <span>No Ordinary UI Bypass</span>
-                </div>
-                <p className="text-[#929AA6] leading-relaxed">
-                  The MEC-G diagnostic engine guarantees that repair procedures and torque sequences remain locked until this gate passes. No client-side script or state spoofing can expose repair guides without an electronic signature entry.
-                </p>
-              </div>
-
-              <div className="space-y-2 pt-2">
-                <div className="text-xs font-mono uppercase text-[#929AA6]">Regulatory Standards Referenced</div>
-                <div className="space-y-1.5 text-xs text-white">
-                  <div className="p-2 rounded bg-[#101318] flex items-center justify-between">
-                    <span>OSHA 29 CFR 1910.147</span>
-                    <span className="font-mono text-[#279C70]">Compliant</span>
-                  </div>
-                  <div className="p-2 rounded bg-[#101318] flex items-center justify-between">
-                    <span>NFPA 70E Electrical Safety</span>
-                    <span className="font-mono text-[#279C70]">Cat 2+ Validated</span>
-                  </div>
-                  <div className="p-2 rounded bg-[#101318] flex items-center justify-between">
-                    <span>ISO 14118 Hazardous Energy Prevention</span>
-                    <span className="font-mono text-[#279C70]">Standard</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 2: ENERGY ISOLATION PROTOCOLS */}
-      {activeTab === "isolation" && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Hydraulic Isolation */}
-          <div className="bg-[#171A21] border border-[#252B35] rounded-xl p-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#D99A29]/15 border border-[#D99A29]/30 flex items-center justify-center text-[#F2B544]">
-                <Flame className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-white">Hydraulic Pressure Isolation</h3>
-                <span className="text-[10px] font-mono text-[#929AA6]">Up to 280 BAR (4000 PSI)</span>
-              </div>
-            </div>
-            <p className="text-xs text-[#929AA6] leading-relaxed">
-              Hydraulic accumulators store explosive potential energy even when main motor pumps are powered down.
-            </p>
-            <div className="space-y-2 text-xs">
-              <div className="p-2.5 rounded bg-[#101318] border border-[#252B35]">
-                <strong className="text-white block">Step 1: Valve V-01 Close</strong>
-                <span className="text-[#929AA6]">Isolate high pressure supply line from reservoir pump.</span>
-              </div>
-              <div className="p-2.5 rounded bg-[#101318] border border-[#252B35]">
-                <strong className="text-white block">Step 2: Manual Bleed V-02</strong>
-                <span className="text-[#929AA6]">Open bleed valve slowly. Confirm analog manometer drops below 5 PSI.</span>
-              </div>
-              <div className="p-2.5 rounded bg-[#101318] border border-[#252B35]">
-                <strong className="text-white block">Step 3: Lock Ball Valve</strong>
-                <span className="text-[#929AA6]">Apply lock clamp to drain lever with red padlock.</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Electrical 480V Isolation */}
-          <div className="bg-[#171A21] border border-[#252B35] rounded-xl p-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#D94D4D]/15 border border-[#D94D4D]/30 flex items-center justify-center text-[#D94D4D]">
-                <ZapOff className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-white">480V 3-Phase Electrical Lockout</h3>
-                <span className="text-[10px] font-mono text-[#929AA6]">NFPA 70E Arc Flash Hazard</span>
-              </div>
-            </div>
-            <p className="text-xs text-[#929AA6] leading-relaxed">
-              High voltage inverter cabinets contain DC-link capacitors requiring 10-minute bleeder discharge.
-            </p>
-            <div className="space-y-2 text-xs">
-              <div className="p-2.5 rounded bg-[#101318] border border-[#252B35]">
-                <strong className="text-white block">Step 1: Trip ACB Breaker</strong>
-                <span className="text-[#929AA6]">Rotate main switch to OFF position until mechanical indicator displays OPEN.</span>
-              </div>
-              <div className="p-2.5 rounded bg-[#101318] border border-[#252B35]">
-                <strong className="text-white block">Step 2: Voltage Verification</strong>
-                <span className="text-[#929AA6]">Use calibrated multi-meter across L1-L2, L2-L3, L1-L3 (must measure &lt; 50V).</span>
-              </div>
-              <div className="p-2.5 rounded bg-[#101318] border border-[#252B35]">
-                <strong className="text-white block">Step 3: Hasp & Lock Application</strong>
-                <span className="text-[#929AA6]">Install steel multi-lock hasp with danger identification tag.</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Pneumatic & Mechanical Rotor Lock */}
-          <div className="bg-[#171A21] border border-[#252B35] rounded-xl p-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#279C70]/15 border border-[#279C70]/30 flex items-center justify-center text-[#279C70]">
-                <Lock className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-white">Mechanical Rotor Lock</h3>
-                <span className="text-[10px] font-mono text-[#929AA6]">Wind Turbine Nacelle Main Shaft</span>
-              </div>
-            </div>
-            <p className="text-xs text-[#929AA6] leading-relaxed">
-              Turbine blades generate immense aerodynamic torque capable of turning rotor during maintenance.
-            </p>
-            <div className="space-y-2 text-xs">
-              <div className="p-2.5 rounded bg-[#101318] border border-[#252B35]">
-                <strong className="text-white block">Step 1: Rotor Brake Engage</strong>
-                <span className="text-[#929AA6]">Activate emergency hydraulic brake caliper to arrest slow rotation.</span>
-              </div>
-              <div className="p-2.5 rounded bg-[#101318] border border-[#252B35]">
-                <strong className="text-white block">Step 2: Hydraulic Rotor Lock Pin</strong>
-                <span className="text-[#929AA6]">Insert dual physical locking pins through rotor hub disc bores.</span>
-              </div>
-              <div className="p-2.5 rounded bg-[#101318] border border-[#252B35]">
-                <strong className="text-white block">Step 3: Mechanical Securing</strong>
-                <span className="text-[#929AA6]">Install mechanical retaining cotter pin and padlock on control console.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 3: PPE REQUIREMENTS CHECKLIST */}
-      {activeTab === "ppe" && (
-        <div className="bg-[#171A21] border border-[#252B35] rounded-xl p-6 space-y-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-base font-bold text-white">Personal Protective Equipment (PPE) Matrix</h3>
-              <p className="text-xs text-[#929AA6]">
-                Mandatory gear verification for field operations and high-hazard equipment servicing.
-              </p>
-            </div>
-            <div className="text-xs font-mono text-[#F2B544]">
-              {ppeItems.filter((p) => p.checked).length} / {ppeItems.length} Verified
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {ppeItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => togglePpe(item.id)}
-                  className={`p-4 rounded-xl border cursor-pointer transition-all flex items-start gap-3.5 ${
-                    item.checked
-                      ? "bg-[#279C70]/10 border-[#279C70]/40 text-white"
-                      : "bg-[#101318] border-[#252B35] text-[#929AA6] hover:border-[#F2B544]"
-                  }`}
-                >
-                  <div className={`p-2.5 rounded-lg ${item.checked ? "bg-[#279C70]/20 text-[#279C70]" : "bg-[#252B35] text-[#929AA6]"}`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white">{item.name}</span>
-                      {item.checked ? (
-                        <CheckCircle2 className="w-4 h-4 text-[#279C70]" />
-                      ) : (
-                        <span className="text-[10px] font-mono text-[#D94D4D] font-bold">REQUIRED</span>
-                      )}
+              {activeTab === "bulletins" && (
+                <div className="space-y-3 text-xs">
+                  <div className="p-4 rounded-2xl bg-[#141518] border border-[#27272A]">
+                    <div className="flex justify-between items-center text-[10px] font-mono text-[#9CA3AF] mb-1">
+                      <span>VESTAS WIND SYSTEMS A/S</span>
+                      <span className="text-emerald-400 font-bold">COMPLIANT (REV 4.2)</span>
                     </div>
-                    <p className="text-[11px] text-[#929AA6] mt-1">
-                      {item.checked ? "Verified inspected & fitted" : "Click to confirm equipment presence"}
+                    <h4 className="font-bold text-white text-sm">V112 Nacelle Pitch Hydraulics Maintenance Standard</h4>
+                    <p className="text-[#9CA3AF] mt-1 text-[11px]">
+                      Mandates dual mechanical lock on pitch cylinder during hub entry. Validated by H. Bauer, Certified Safety Professional.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-[#141518] border border-[#27272A]">
+                    <div className="flex justify-between items-center text-[10px] font-mono text-[#9CA3AF] mb-1">
+                      <span>PARKER HANNIFIN</span>
+                      <span className="text-emerald-400 font-bold">COMPLIANT (TECHBUL-2026A)</span>
+                    </div>
+                    <h4 className="font-bold text-white text-sm">D1FP Proportional Valve Torquing & Seal Integrity Bulletin</h4>
+                    <p className="text-[#9CA3AF] mt-1 text-[11px]">
+                      Hex collar torque specification calibrated at 45 Nm with Viton fluoroelastomer O-rings only.
                     </p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-
-          <div className="p-4 rounded-lg bg-[#101318] border border-[#252B35] flex items-center justify-between text-xs">
-            <span className="text-[#929AA6]">
-              All PPE items are enforced prior to procedure unlocking under OSHA 1910 Subpart I.
-            </span>
-            <button
-              onClick={() => {
-                setPpeItems((prev) => prev.map((p) => ({ ...p, checked: true })));
-                showToast("All required PPE items marked as verified.");
-              }}
-              className="px-3 py-1.5 rounded bg-[#252B35] hover:bg-[#252B35]/80 text-white font-medium"
-            >
-              Verify All PPE
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4: APPROVED MANUAL VERSIONS */}
-      {activeTab === "manuals" && (
-        <div className="bg-[#171A21] border border-[#252B35] rounded-xl overflow-hidden shadow-sm space-y-4 p-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 className="text-base font-bold text-white">Manufacturer Manual Compliance Registry</h3>
-              <p className="text-xs text-[#929AA6]">
-                Ensures that the offline AI knowledge base only references certified, manufacturer-approved technical revisions.
-              </p>
+              )}
             </div>
-            <Link
-              to="/library"
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-[#F2B544] hover:bg-[#F2B544]/90 text-[#101318] text-xs font-bold transition-colors"
-            >
-              <UploadCloud className="w-3.5 h-3.5" />
-              <span>Import Updated Manual</span>
-            </Link>
-          </div>
+          </section>
+        </div>
+      </main>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-[#929AA6]">
-              <thead className="bg-[#101318] text-xs font-mono uppercase text-[#929AA6] border-b border-[#252B35]">
-                <tr>
-                  <th className="py-3 px-3">Manual Title</th>
-                  <th className="py-3 px-3">Equipment Target</th>
-                  <th className="py-3 px-3">Approved Rev</th>
-                  <th className="py-3 px-3">Engine KB Rev</th>
-                  <th className="py-3 px-3">Compliance Status</th>
-                  <th className="py-3 px-3">Safety Engineer</th>
-                  <th className="py-3 px-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#252B35] text-xs">
-                {manualReviews.map((m) => (
-                  <tr key={m.id} className="hover:bg-[#252B35]/30">
-                    <td className="py-3.5 px-3">
-                      <div className="font-bold text-white">{m.title}</div>
-                      <div className="text-[10px] text-[#929AA6] font-mono">{m.manufacturer}</div>
-                    </td>
-                    <td className="py-3.5 px-3 font-medium text-white">{m.equipment}</td>
-                    <td className="py-3.5 px-3 font-mono text-white">{m.approvedVersion}</td>
-                    <td className="py-3.5 px-3 font-mono text-[#929AA6]">{m.currentKbVersion}</td>
-                    <td className="py-3.5 px-3">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold ${
-                          m.status === "Compliant"
-                            ? "bg-[#279C70]/15 text-[#279C70] border border-[#279C70]/30"
-                            : m.status === "Review Required"
-                            ? "bg-[#D99A29]/15 text-[#F2B544] border border-[#D99A29]/30"
-                            : "bg-[#D94D4D]/15 text-[#D94D4D] border border-[#D94D4D]/30"
-                        }`}
-                      >
-                        {m.status === "Compliant" ? (
-                          <Check className="w-3 h-3" />
-                        ) : (
-                          <AlertTriangle className="w-3 h-3" />
-                        )}
-                        {m.status}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-3 font-mono text-xs text-white">{m.safetyEngineer}</td>
-                    <td className="py-3.5 px-3 text-right">
-                      {m.status !== "Compliant" ? (
-                        <button
-                          onClick={() => handleApproveManualVersion(m.id)}
-                          className="px-2.5 py-1 rounded bg-[#F2B544] hover:bg-[#F2B544]/90 text-[#101318] text-xs font-bold"
-                        >
-                          Approve Revision
-                        </button>
-                      ) : (
-                        <span className="text-xs font-mono text-[#279C70]">Verified Audit</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Issue Digital LOTO Permit Modal */}
+      {showPermitModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-[#18181A] border border-[#27272A] rounded-[24px] p-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-[#27272A] mb-4">
+              <div className="flex items-center gap-2">
+                <Lock className="w-5 h-5 text-amber-400" />
+                <h3 className="text-sm font-bold text-white">Issue Digital LOTO Isolation Permit</h3>
+              </div>
+              <button
+                onClick={() => setShowPermitModal(false)}
+                className="text-[#9CA3AF] hover:text-white p-1 rounded cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleIssuePermit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block text-[#9CA3AF] mb-1 font-medium">Equipment Asset</label>
+                <input
+                  type="text"
+                  value={selectedAsset}
+                  disabled
+                  className="w-full bg-[#141518] border border-[#27272A] rounded-xl px-3 py-2 text-white font-medium opacity-80"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[#9CA3AF] mb-1 font-medium">Technician Name</label>
+                <input
+                  type="text"
+                  value={newTechnicianName}
+                  onChange={(e) => setNewTechnicianName(e.target.value)}
+                  required
+                  className="w-full bg-[#141518] border border-[#27272A] rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#22D3EE]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[#9CA3AF] mb-1 font-medium">Technician Safety Badge ID</label>
+                <input
+                  type="text"
+                  value={newBadgeId}
+                  onChange={(e) => setNewBadgeId(e.target.value)}
+                  required
+                  className="w-full bg-[#141518] border border-[#27272A] rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#22D3EE]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[#9CA3AF] mb-1 font-medium">Master Lock Padlock Serial #</label>
+                <input
+                  type="text"
+                  value={newPadlockSerial}
+                  onChange={(e) => setNewPadlockSerial(e.target.value)}
+                  required
+                  className="w-full bg-[#141518] border border-[#27272A] rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-[#22D3EE]"
+                />
+              </div>
+
+              <div className="p-3 bg-[#141518] rounded-xl border border-[#27272A] text-[#9CA3AF] text-[11px]">
+                By issuing this digital permit, you certify that all hazardous energy sources have been mechanically isolated and depressurized in accordance with OSHA 1910.147.
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3 pt-3 border-t border-[#27272A]">
+                <button
+                  type="button"
+                  onClick={() => setShowPermitModal(false)}
+                  className="px-4 py-2 rounded-full bg-[#1E1F24] hover:bg-[#25262E] text-white text-xs font-medium cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-full bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Authorize & Issue Permit</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
 
-      {/* TAB 5: INCOMPLETE ACKNOWLEDGEMENTS */}
-      {activeTab === "pending" && (
-        <div className="bg-[#171A21] border border-[#252B35] rounded-xl p-5 space-y-4">
-          <div>
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5 text-[#D94D4D]" />
-              <span>Incomplete Safety Acknowledgements & Gate Interventions</span>
-            </h3>
-            <p className="text-xs text-[#929AA6] mt-1">
-              Active diagnostic sessions blocked by unresolved safety gates. Technician action required before procedure release.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            {incompleteAcknowledgements.map((inc) => (
-              <div
-                key={inc.id}
-                className="p-4 rounded-xl bg-[#101318] border border-[#D94D4D]/40 space-y-3"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-[#D94D4D]/20 text-[#D94D4D] font-mono text-xs font-bold">
-                      {inc.riskLevel}
-                    </span>
-                    <span className="text-xs font-mono font-bold text-white">Session {inc.session}</span>
-                    <span className="text-xs text-[#929AA6]">• {inc.asset}</span>
-                  </div>
-                  <span className="text-xs font-mono text-[#929AA6]">{inc.time}</span>
-                </div>
-
-                <div className="text-xs text-white font-medium bg-[#171A21] p-3 rounded-lg border border-[#252B35]">
-                  <strong className="text-[#F2B544]">Blocked Safety Interlock: </strong>
-                  {inc.missingGate}
-                </div>
-
-                <div className="flex items-center justify-between text-xs text-[#929AA6]">
-                  <div>Technician: {inc.technician}</div>
-                  <Link
-                    to="/diagnose"
-                    className="text-[#F2B544] hover:underline flex items-center gap-1 font-semibold"
-                  >
-                    <span>Resolve in Diagnostic Workspace</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
+      {/* View Permit Modal */}
+      {selectedPermitForView && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-[#18181A] border border-[#27272A] rounded-[24px] p-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-[#27272A] mb-4">
+              <div className="flex items-center gap-2">
+                <FileCheck2 className="w-5 h-5 text-emerald-400" />
+                <h3 className="text-sm font-bold text-white">Digital LOTO Permit Record</h3>
               </div>
-            ))}
+              <button
+                onClick={() => setSelectedPermitForView(null)}
+                className="text-[#9CA3AF] hover:text-white p-1 rounded cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 font-mono text-xs bg-[#141518] p-4 rounded-2xl border border-[#27272A]">
+              <div className="flex justify-between border-b border-[#27272A] pb-2">
+                <span className="text-[#9CA3AF]">PERMIT ID:</span>
+                <span className="text-cyan-400 font-bold">{selectedPermitForView.id}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#9CA3AF]">ASSET:</span>
+                <span className="text-white">{selectedPermitForView.asset}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#9CA3AF]">TECHNICIAN:</span>
+                <span className="text-white">{selectedPermitForView.technician} ({selectedPermitForView.badgeId})</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#9CA3AF]">ENERGY SOURCE:</span>
+                <span className="text-amber-400">{selectedPermitForView.energyType}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#9CA3AF]">TIMESTAMP:</span>
+                <span className="text-white">{selectedPermitForView.issuedAt}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[#9CA3AF]">INTERLOCK STATUS:</span>
+                <span className="text-emerald-400 font-bold">{selectedPermitForView.status}</span>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setSelectedPermitForView(null)}
+                className="px-4 py-2 rounded-full bg-[#1E1F24] hover:bg-[#25262E] text-white text-xs font-medium cursor-pointer"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => window.print()}
+                className="px-5 py-2 rounded-full bg-[#22D3EE] hover:bg-[#06B6D4] text-black text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Print Permit Placard</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
     </div>
   );
 };
-

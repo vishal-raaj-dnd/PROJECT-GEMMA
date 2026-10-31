@@ -6,9 +6,6 @@ import { DiagnosticPage } from "./pages/DiagnosticPage";
 import { GraphPage } from "./pages/GraphPage";
 import { IngestPage } from "./pages/IngestPage";
 import { SafetyCompliancePage } from "./pages/SafetyCompliancePage";
-import { LandingPage } from "./pages/LandingPage";
-import { Navbar } from "./components/Navbar";
-import { CapacityFooter } from "./components/CapacityFooter";
 
 // Helper component to scroll to top on route change
 const ScrollToTopOnNavigate: React.FC = () => {
@@ -21,17 +18,6 @@ const ScrollToTopOnNavigate: React.FC = () => {
   return null;
 };
 
-// Layout wrapper for marketing & legacy diagnostic pages
-const StandardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <div className="min-h-screen bg-[#0B0D12] text-[#F5F7FF] flex flex-col font-sans selection:bg-[#8B5CF6]/30 selection:text-white">
-      <Navbar />
-      <main className="flex-1">{children}</main>
-      <CapacityFooter />
-    </div>
-  );
-};
-
 export default function App() {
   return (
     <BrowserRouter>
@@ -41,55 +27,12 @@ export default function App() {
         <Route path="/" element={<WorkspacePage />} />
         <Route path="/workspace" element={<WorkspacePage />} />
 
-        {/* Dedicated Industrial Hardware Diagnostics, Safety, and Graph Pages */}
-        <Route
-          path="/diagnostics"
-          element={
-            <StandardLayout>
-              <DiagnosticPage />
-            </StandardLayout>
-          }
-        />
-        <Route
-          path="/diagnose"
-          element={
-            <StandardLayout>
-              <DiagnosticPage />
-            </StandardLayout>
-          }
-        />
-        <Route
-          path="/graph"
-          element={
-            <StandardLayout>
-              <GraphPage />
-            </StandardLayout>
-          }
-        />
-        <Route
-          path="/ingest"
-          element={
-            <StandardLayout>
-              <IngestPage />
-            </StandardLayout>
-          }
-        />
-        <Route
-          path="/safety"
-          element={
-            <StandardLayout>
-              <SafetyCompliancePage />
-            </StandardLayout>
-          }
-        />
-        <Route
-          path="/landing"
-          element={
-            <StandardLayout>
-              <LandingPage />
-            </StandardLayout>
-          }
-        />
+        {/* Dedicated Modern MECH-G Industrial Engineering Pages */}
+        <Route path="/diagnostics" element={<DiagnosticPage />} />
+        <Route path="/diagnose" element={<DiagnosticPage />} />
+        <Route path="/graph" element={<GraphPage />} />
+        <Route path="/ingest" element={<IngestPage />} />
+        <Route path="/safety" element={<SafetyCompliancePage />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

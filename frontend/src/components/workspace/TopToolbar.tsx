@@ -17,16 +17,31 @@ interface TopToolbarProps {
   title?: string;
   sourceCount?: number;
   onNewChat?: () => void;
+  activeModule?: "workspace" | "diagnostics" | "graph" | "safety" | "ingest";
 }
 
 export const TopToolbar: React.FC<TopToolbarProps> = ({
   title = "MECH-G Master Documentation",
   onNewChat,
+  activeModule: propActiveModule,
 }) => {
   const location = useLocation();
   const [showNavMenu, setShowNavMenu] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+
+  // Automatically detect active module if not explicitly provided
+  const activeModule =
+    propActiveModule ||
+    (location.pathname.startsWith("/diagnostic")
+      ? "diagnostics"
+      : location.pathname.startsWith("/graph")
+      ? "graph"
+      : location.pathname.startsWith("/safety")
+      ? "safety"
+      : location.pathname.startsWith("/ingest")
+      ? "ingest"
+      : "workspace");
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -45,7 +60,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <h1 className="text-[15px] font-semibold text-white tracking-tight hover:text-[#22D3EE] transition-colors">
+            <h1 className="text-[14px] font-semibold text-white tracking-tight hover:text-[#22D3EE] transition-colors">
               {title}
             </h1>
             <span className="px-2 py-0.5 rounded-full bg-[#22D3EE]/10 text-[#22D3EE] border border-[#22D3EE]/20 text-[10px] font-mono font-medium">
@@ -55,10 +70,69 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
         </Link>
       </div>
 
+      {/* Center: Module Navigation Pills */}
+      <nav className="hidden md:flex items-center gap-1 bg-[#141518] p-1 rounded-full border border-[#27272A]/80 shadow-inner">
+        <Link
+          to="/workspace"
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
+            activeModule === "workspace"
+              ? "bg-[#24252B] text-white shadow-sm border border-[#3A3B43]"
+              : "text-[#9CA3AF] hover:text-white hover:bg-[#1E1F24]"
+          }`}
+        >
+          <Sparkles className="w-3.5 h-3.5 text-[#22D3EE]" />
+          <span>Workspace</span>
+        </Link>
+        <Link
+          to="/diagnostics"
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
+            activeModule === "diagnostics"
+              ? "bg-[#24252B] text-white shadow-sm border border-[#3A3B43]"
+              : "text-[#9CA3AF] hover:text-white hover:bg-[#1E1F24]"
+          }`}
+        >
+          <Wrench className="w-3.5 h-3.5 text-[#FBBF24]" />
+          <span>Diagnostics</span>
+        </Link>
+        <Link
+          to="/graph"
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
+            activeModule === "graph"
+              ? "bg-[#24252B] text-white shadow-sm border border-[#3A3B43]"
+              : "text-[#9CA3AF] hover:text-white hover:bg-[#1E1F24]"
+          }`}
+        >
+          <Layers className="w-3.5 h-3.5 text-[#8B5CF6]" />
+          <span>Graph</span>
+        </Link>
+        <Link
+          to="/safety"
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
+            activeModule === "safety"
+              ? "bg-[#24252B] text-white shadow-sm border border-[#3A3B43]"
+              : "text-[#9CA3AF] hover:text-white hover:bg-[#1E1F24]"
+          }`}
+        >
+          <ShieldAlert className="w-3.5 h-3.5 text-[#FB7185]" />
+          <span>Safety</span>
+        </Link>
+        <Link
+          to="/ingest"
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
+            activeModule === "ingest"
+              ? "bg-[#24252B] text-white shadow-sm border border-[#3A3B43]"
+              : "text-[#9CA3AF] hover:text-white hover:bg-[#1E1F24]"
+          }`}
+        >
+          <UploadCloud className="w-3.5 h-3.5 text-[#34D399]" />
+          <span>Ingest</span>
+        </Link>
+      </nav>
+
       {/* Right Controls */}
       <div className="flex items-center gap-2">
-        {/* Switch Views Dropdown for Field Engineering Tools */}
-        <div className="relative">
+        {/* Switch Views Dropdown for Mobile / Compact Screens */}
+        <div className="relative md:hidden">
           <button
             onClick={() => setShowNavMenu(!showNavMenu)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs text-[#9CA3AF] hover:text-white hover:bg-[#1E1F24] transition-colors border border-[#27272A]"
@@ -72,7 +146,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
               <Link
                 to="/workspace"
                 onClick={() => setShowNavMenu(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-white hover:bg-[#24252B] transition-colors"
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-colors ${
+                  activeModule === "workspace" ? "bg-[#24252B] text-white" : "text-[#9CA3AF] hover:text-white"
+                }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#22D3EE]" />
                 <span>Knowledge Workspace</span>
@@ -80,7 +156,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
               <Link
                 to="/diagnostics"
                 onClick={() => setShowNavMenu(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-white hover:bg-[#24252B] transition-colors"
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-colors ${
+                  activeModule === "diagnostics" ? "bg-[#24252B] text-white" : "text-[#9CA3AF] hover:text-white"
+                }`}
               >
                 <Wrench className="w-3.5 h-3.5 text-[#FBBF24]" />
                 <span>Field Diagnostics</span>
@@ -88,7 +166,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
               <Link
                 to="/graph"
                 onClick={() => setShowNavMenu(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-white hover:bg-[#24252B] transition-colors"
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-colors ${
+                  activeModule === "graph" ? "bg-[#24252B] text-white" : "text-[#9CA3AF] hover:text-white"
+                }`}
               >
                 <Layers className="w-3.5 h-3.5 text-[#8B5CF6]" />
                 <span>Graph Explorer</span>
@@ -96,7 +176,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
               <Link
                 to="/safety"
                 onClick={() => setShowNavMenu(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-white hover:bg-[#24252B] transition-colors"
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-colors ${
+                  activeModule === "safety" ? "bg-[#24252B] text-white" : "text-[#9CA3AF] hover:text-white"
+                }`}
               >
                 <ShieldAlert className="w-3.5 h-3.5 text-[#FB7185]" />
                 <span>Safety Compliance</span>
@@ -104,7 +186,9 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
               <Link
                 to="/ingest"
                 onClick={() => setShowNavMenu(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-white hover:bg-[#24252B] transition-colors"
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-colors ${
+                  activeModule === "ingest" ? "bg-[#24252B] text-white" : "text-[#9CA3AF] hover:text-white"
+                }`}
               >
                 <UploadCloud className="w-3.5 h-3.5 text-[#34D399]" />
                 <span>Ingest Manuals</span>
@@ -120,7 +204,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
           title="Start fresh conversation"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span>New Session</span>
+          <span className="hidden sm:inline">New Session</span>
         </button>
 
         {/* Share */}
@@ -130,7 +214,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
           title="Copy link to clipboard"
         >
           {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
-          <span>{copiedLink ? "Copied" : "Share"}</span>
+          <span className="hidden sm:inline">{copiedLink ? "Copied" : "Share"}</span>
         </button>
 
         {/* Settings */}
@@ -186,7 +270,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => setShowSettings(false)}
-                className="px-4 py-1.5 rounded-full bg-[#232326] hover:bg-[#2A2A2F] text-white text-xs font-medium border border-[#2E2E33] transition-colors"
+                className="px-4 py-1.5 rounded-full bg-[#232326] hover:bg-[#2A2A2F] text-white text-xs font-medium border border-[#2E2E33] transition-colors cursor-pointer"
               >
                 Close
               </button>

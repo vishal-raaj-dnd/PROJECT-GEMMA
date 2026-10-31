@@ -8,5 +8,38 @@
     "hash": "267479377c5591281fac6ff54fce3a39",
     "compiled_at": 1793438886.9928315,
     "concepts_count": 1
+  },
+  "Project-K Unified Platform Master Documentation.md": {
+    "hash": "f942e5b9141a8d8dfa5cf5fc699b5392",
+    "compiled_at": 1793443240.403946,
+    "concepts_count": 26,
+    "node_paths": [
+      "reference/project-melv-master-documentation.md",
+      "guide/project-melv-executive-summary.md",
+      "component/problem-context-and-economic-impact.md",
+      "component/project-melv-requirements-and-solution-overview.md",
+      "fault_code/4-system-architecture.md",
+      "component/5-edge-node-hardware-and-inference-cascade.md",
+      "component/vehicle-intelligence-identity-module.md",
+      "safety/7-trajectory-anomaly-and-intercept-engines.md",
+      "component/city-control-plane.md",
+      "procedure/emergency-response-workflow.md",
+      "guide/road-intelligence-and-urban-analytics.md",
+      "component/digital-twin-system.md",
+      "component/command-centre-web-application.md",
+      "specification/data-contract-edge-cloud.md",
+      "component/privacy-security-governance-framework.md",
+      "specification/bandwidth-cost-and-edge-case-handling.md",
+      "specification/evaluation-methodology-and-performance-targets.md",
+      "safety/risks-and-limitations-analysis.md",
+      "guide/deployment-roadmap-and-go-to-market.md",
+      "reference/market-and-business-model-analysis.md",
+      "reference/social-impact-and-policy-alignment.md",
+      "specification/technology-stack-overview.md",
+      "component/project-melv-demonstrator-scope.md",
+      "component/node-link-state-machine-and-registration-plate-grammar-parser.md",
+      "component/project-melv-pitch-outline.md",
+      "guide/future-work-and-conclusion.md"
+    ]
   }
 }
