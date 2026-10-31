@@ -1,0 +1,19 @@
+# Virtual Environment
+.venv/
+env/
+venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache/
+.pytest_cache/
+
+# Local Environment Variables
+.env
+backend/.env
+
+# Temporary / OS
+.DS_Store
+Thumbs.db
