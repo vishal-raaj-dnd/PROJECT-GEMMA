@@ -417,3 +417,4 @@ export const INITIAL_GRAPH_STATS: GraphStats = {
   },
   is_indexed: true
 };
+

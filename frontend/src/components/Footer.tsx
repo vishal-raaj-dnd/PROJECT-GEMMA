@@ -1,43 +1,74 @@
 import React from "react";
-import { Cpu, Github, BookOpen, ShieldCheck, Heart } from "lucide-react";
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  onScrollToTop: () => void;
+  onScrollToWorkbench: () => void;
+  onScrollToFAQ: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onScrollToTop, onScrollToWorkbench, onScrollToFAQ }) => {
   return (
-    <footer className="border-t border-slate-800/80 bg-slate-950 py-12 text-slate-400 text-xs font-mono">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
-            <Cpu className="w-4 h-4 text-amber-400" />
+    <footer className="relative bg-[#0A0A0C] pt-20 overflow-hidden hairline-t">
+      <div className="max-w-6xl mx-auto px-6 relative z-10">
+        {/* Top Row */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8 pb-12 border-b border-white/[0.08]">
+          {/* Left: Logo mark + Wordmark + Tagline */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2.5">
+              <img
+                src="/brand/mascot-icon.webp"
+                alt="GemmaOps"
+                className="w-7 h-7 rounded-lg object-cover"
+              />
+              <span className="text-white font-bold tracking-tight text-lg">GemmaOps</span>
+            </div>
+            <p className="text-xs text-[#9A9AA2] max-w-sm leading-relaxed">
+              Frontline hardware diagnostic engine for field technicians. Powered by Google Gemma 4 and OmniOKF linked knowledge graphs.
+            </p>
           </div>
-          <div>
-            <div className="text-sm font-bold text-white font-sans">
-              GEMMA<span className="text-amber-400">OPS</span>
-            </div>
-            <div className="text-[11px] text-slate-500">
-              Field Engineering & Hardware Diagnostic Engine
-            </div>
+
+          {/* Right: Three Text Links */}
+          <div className="flex items-center gap-8 text-sm">
+            <button
+              onClick={onScrollToWorkbench}
+              className="text-[#9A9AA2] hover:text-white transition-colors cursor-pointer text-xs font-mono"
+            >
+              Join the waitlist
+            </button>
+            <button
+              onClick={onScrollToFAQ}
+              className="text-[#9A9AA2] hover:text-white transition-colors cursor-pointer text-xs font-mono"
+            >
+              FAQ
+            </button>
+            <a
+              href="mailto:contact@gemma-engine.dev"
+              className="text-[#9A9AA2] hover:text-white transition-colors cursor-pointer text-xs font-mono"
+            >
+              Contact
+            </a>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-6 text-slate-300">
-          <div className="flex items-center gap-1.5 text-amber-300">
-            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span>Target: Gemma 4 12B / Gemma 4 E4B</span>
-          </div>
-          <a
-            href="https://github.com/vishal-raaj-dnd/PROJECT-GEMMA"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1.5 hover:text-white transition-colors"
-          >
-            <Github className="w-4 h-4" />
-            <span>GitHub Repository</span>
-          </a>
+        {/* Bottom Row */}
+        <div className="py-8 flex items-center justify-between text-xs font-mono text-[#9A9AA2]">
+          <div>© 2026 GemmaOps Engine</div>
+          <button className="hover:text-white transition-colors cursor-pointer">
+            Cookie settings
+          </button>
         </div>
+      </div>
 
-        <div className="text-slate-500 text-center sm:text-right">
-          <div>Built with OmniOKF & Multimodal Gemma</div>
-          <div className="text-[10px] text-slate-600 mt-0.5">OSHA 1910.147 LOTO Verification Guaranteed</div>
+      {/* Signature Close: Giant Wordmark Cropped by the Bottom Edge */}
+      <div className="relative w-full overflow-hidden flex justify-center items-end select-none pointer-events-none mt-8 -mb-10 sm:-mb-14">
+        {/* Purple Radial Glow rising from the bottom */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80vw] h-[350px] bg-[#6C4CF1]/25 blur-[140px] rounded-full pointer-events-none" />
+
+        {/* Giant All-Caps Name ~20vw */}
+        <div
+          className="text-[19vw] font-black tracking-[-0.05em] uppercase leading-none bg-gradient-to-b from-[#C9B8FF] via-[#A892F8]/70 to-transparent bg-clip-text text-transparent transform translate-y-[38%] text-center opacity-90 drop-shadow-sm"
+        >
+          GEMMAOPS
         </div>
       </div>
     </footer>
