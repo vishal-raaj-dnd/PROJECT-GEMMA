@@ -135,3 +135,4 @@ def write_okf_bundle(output_dir: str, concepts: Dict[str, Dict[str, Any]], linke
     index_path = os.path.join(output_dir, "index.md")
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(index_content)
+

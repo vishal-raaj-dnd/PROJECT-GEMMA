@@ -34,3 +34,4 @@ timestamp: '2026-10-31T11:00:00Z'
 - Cylindrical black anodized aluminum enclosure with top-mounted 2-pin IP67 Deutsch electrical connector.
 - Stamped laser-etched serial plate on hexagonal collar: `P/N: PRV-992-B`.
 - Common failure mode: Radial hydraulic fluid weepage around hex collar caused by extrusion of the internal Viton seal ring under pulse pressure spikes.
+

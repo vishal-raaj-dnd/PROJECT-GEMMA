@@ -33,3 +33,4 @@ graph TD
 
 ### Tools
 - **[Calibrated Digital Torque Wrench (10-100 Nm)](./tools/calibrated_torque_wrench.md)** - Precision digital torque wrench with angle measurement for structural fastener assemblies. *(tool, calibration, torque)*
+

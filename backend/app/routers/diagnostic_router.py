@@ -89,3 +89,4 @@ async def get_diagnostic_session(
     if not session:
         raise HTTPException(status_code=404, detail="Diagnostic session not found")
     return session
+

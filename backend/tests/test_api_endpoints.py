@@ -73,3 +73,4 @@ def test_diagnostic_and_safety_gate_flow(client: TestClient):
     session_res = client.get(f"/api/diagnose/{diag_id}")
     assert session_res.status_code == 200
     assert session_res.json()["safety_interlocks"]["acknowledged"] is True
+

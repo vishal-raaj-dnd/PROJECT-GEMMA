@@ -183,3 +183,4 @@ class GemmaClient:
                 "Log maintenance record in digital field register."
             ]
         )
+

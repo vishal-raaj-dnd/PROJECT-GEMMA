@@ -49,3 +49,4 @@ def test_subgraph_traversal_depth(graph_engine: OKFGraphEngine):
     assert entry_path in paths
     assert any("valve_seal_replacement" in p for p in paths)
     assert any("calibrated_torque_wrench" in p for p in paths)
+

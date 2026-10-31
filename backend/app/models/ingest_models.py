@@ -18,3 +18,4 @@ class IngestResponse(BaseModel):
     output_directory: str
     file_details: List[IngestFileItem] = Field(default_factory=list)
     errors: List[str] = Field(default_factory=list)
+

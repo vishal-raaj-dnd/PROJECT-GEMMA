@@ -22,3 +22,4 @@ timestamp: '2026-10-31T11:00:00Z'
 - Arc flash face shield (minimum 8 cal/cm2 rating).
 - Flame resistant (FR) cotton coveralls.
 - Dielectric insulating rubber gloves with leather protectors.
+

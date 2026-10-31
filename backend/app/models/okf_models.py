@@ -45,3 +45,4 @@ class OKFGraphStats(BaseModel):
     category_counts: Dict[str, int]
     last_compiled: Optional[datetime] = None
     is_indexed: bool
+

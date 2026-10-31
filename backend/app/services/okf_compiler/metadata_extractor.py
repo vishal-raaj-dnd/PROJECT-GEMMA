@@ -61,3 +61,4 @@ def extract_metadata(chunk_content: str, header: str, idx: int) -> Tuple[Dict[st
         logger.warning("Gemma metadata extraction failed (%s). Falling back to local classifier.", str(e))
         meta = smart_local_classify(header, chunk_content, idx)
         return meta, chunk_content
+

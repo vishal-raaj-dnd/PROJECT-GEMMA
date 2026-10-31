@@ -83,3 +83,4 @@ class SafetyAckResponse(BaseModel):
     acknowledged_by: str
     acknowledged_at: str
     message: str
+

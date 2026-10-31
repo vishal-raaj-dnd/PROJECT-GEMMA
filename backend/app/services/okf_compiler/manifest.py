@@ -36,3 +36,4 @@ def save_manifest(output_dir: str, manifest_data: Dict[str, Any]) -> None:
             json.dump(manifest_data, f, indent=2, ensure_ascii=False)
     except Exception:
         pass
+

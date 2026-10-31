@@ -64,3 +64,4 @@ async def compile_all_raw_docs(compiler: OKFCompilerService = Depends(get_compil
 async def get_compilation_manifest():
     """Returns the current incremental compilation cache manifest."""
     return load_manifest(str(settings.resolved_okf_dir))
+

@@ -30,3 +30,4 @@ timestamp: '2026-10-31T11:00:00Z'
 2. Slide new seal over cartridge groove ensuring PTFE backup ring faces the low-pressure side.
 3. Seat valve into cavity by hand until flush with manifold face.
 4. Using a [Calibrated Digital Torque Wrench](../tools/calibrated_torque_wrench.md), torque the 4x M10 fasteners in three incremental passes: 15 Nm, 25 Nm, and final torque of exactly 35 Nm.
+

@@ -50,3 +50,4 @@ def test_audit_hallucinated_heading_in_valid_node(auditor: CitationAuditor):
     assert len(verifications) == 1
     assert all_verified is False
     assert verifications[0].verification_status == "unverified_section"
+

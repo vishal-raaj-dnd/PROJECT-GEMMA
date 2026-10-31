@@ -142,3 +142,4 @@ class CitationAuditor:
         # Fallback snippet if heading was not an exact match
         clean_body = re.sub(r"^(#+)\s+.*$", "", markdown_body, flags=re.MULTILINE).strip()
         return (clean_body[:200] + "..."), False
+

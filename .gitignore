@@ -17,3 +17,4 @@ backend/.env
 # Temporary / OS
 .DS_Store
 Thumbs.db
+

@@ -124,3 +124,4 @@ All 15 unit and integration tests verify graph traversal, fuzzy part lookup, cit
 - **`POST /api/ingest/upload`**: Uploads raw documents (PDF, DOCX, XLSX, MD) and compiles them into `.okf` format using your OmniOKF engine.
 - **`POST /api/ingest/compile-all`**: Recompiles all manuals in the raw documents folder.
 - **`GET /api/ingest/manifest`**: Returns incremental MD5 hash cache status.
+

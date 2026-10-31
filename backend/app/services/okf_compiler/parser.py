@@ -185,3 +185,4 @@ def smart_local_classify(header: str, content: str, idx: int) -> Dict[str, Any]:
         "tags": [inferred_type, "fieldops"],
         "filename": slug
     }
+

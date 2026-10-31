@@ -72,3 +72,4 @@ def test_compiler_service_compiles_file(tmp_path: Path):
     assert res.status == "completed"
     assert res.concepts_created >= 2
     assert (output_dir / "index.md").exists()
+

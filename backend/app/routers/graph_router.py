@@ -90,3 +90,4 @@ async def reload_graph(engine: OKFGraphEngine = Depends(get_graph_engine)):
     """Forces a refresh of the knowledge graph from disk."""
     engine.reload()
     return engine.get_stats()
+

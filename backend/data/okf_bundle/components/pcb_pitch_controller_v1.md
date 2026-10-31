@@ -26,3 +26,4 @@ timestamp: '2026-10-31T11:00:00Z'
 ## Visual Identification & Failure Analysis
 - Double-sided green solder mask PCB mounted in aluminum RF shield bay.
 - Common failure: Thermal stress from yaw brake regeneration causes bulging or electrolyte rupture on capacitor C14, leaving brownish scorched flux residue across the 24V plane.
+
