@@ -6,9 +6,12 @@ import { KnowledgeGraphPanel } from "../components/workspace/KnowledgeGraphPanel
 import { SourcePreviewModal } from "../components/workspace/SourcePreviewModal";
 import { DocumentService } from "../services/documentService";
 import { ChatService } from "../services/chatService";
+import { useProcessing } from "../context/ProcessingContext";
 import { SourceDocument, ChatMessage, Conversation, Citation } from "../types/workspace";
 
 export const WorkspacePage: React.FC = () => {
+  const { setProcessing } = useProcessing();
+
   // Sources state
   const [documents, setDocuments] = useState<SourceDocument[]>([]);
   const [selectedDocIds, setSelectedDocIds] = useState<string[]>([]);
@@ -41,6 +44,11 @@ export const WorkspacePage: React.FC = () => {
 
   const isDraggingLeft = useRef(false);
   const isDraggingRight = useRef(false);
+
+  // Sync isStreaming to global processing flame animation
+  useEffect(() => {
+    setProcessing(isStreaming, streamingStatus || "Gemma 4 is synthesizing grounded reasoning...");
+  }, [isStreaming, streamingStatus, setProcessing]);
 
   // Load documents and existing conversation
   const loadDocuments = useCallback(async () => {
@@ -184,7 +192,7 @@ export const WorkspacePage: React.FC = () => {
           if (stage === "retrieving_context") {
             setStreamingStatus("Querying OKF knowledge graph...");
           } else if (stage === "generating") {
-            setStreamingStatus("Gemma is synthesizing grounded response...");
+            setStreamingStatus("Gemma 4 is synthesizing grounded response...");
           }
         },
         onToken: (token) => {
@@ -269,7 +277,7 @@ export const WorkspacePage: React.FC = () => {
   const selectedSources = documents.filter((d) => selectedDocIds.includes(d.id));
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-[#0B0B0C] overflow-hidden select-none">
+    <div className="h-screen w-screen flex flex-col bg-[#0B0B0C] overflow-hidden select-none relative z-10">
       {/* Top Application Toolbar */}
       <TopToolbar
         title="MECH-G Master Documentation"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { TopToolbar } from "../components/workspace/TopToolbar";
+import { useProcessing } from "../context/ProcessingContext";
 import {
   UploadCloud,
   FileText,
@@ -38,6 +39,11 @@ export const IngestPage: React.FC = () => {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [isLoadingDocs, setIsLoadingDocs] = useState(true);
   const [isCompiling, setIsCompiling] = useState(false);
+  const { setProcessing } = useProcessing();
+
+  useEffect(() => {
+    setProcessing(isCompiling, "OmniOKF Compiler parsing and generating knowledge nodes...");
+  }, [isCompiling, setProcessing]);
   const [searchFilter, setSearchFilter] = useState("");
   const [consoleLogs, setConsoleLogs] = useState<string[]>([
     "[SYSTEM] OmniOKF Ingestion Engine initialized.",

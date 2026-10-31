@@ -27,6 +27,7 @@ import {
 import { DiagnosticResponse, CitationVerification } from "../types/diagnostic";
 import { SAMPLE_QUERIES, SampleQueryItem } from "../data/sampleData";
 import { ApiService } from "../services/api";
+import { useProcessing } from "../context/ProcessingContext";
 
 export const DiagnosticPage: React.FC = () => {
   const location = useLocation();
@@ -38,6 +39,11 @@ export const DiagnosticPage: React.FC = () => {
   const [queryText, setQueryText] = useState<string>(SAMPLE_QUERIES[0].queryText);
   const [activeSampleId, setActiveSampleId] = useState<string>(SAMPLE_QUERIES[0].id);
   const [isLoading, setIsLoading] = useState(false);
+  const { setProcessing } = useProcessing();
+
+  useEffect(() => {
+    setProcessing(isLoading, "Gemma 4 Multimodal evaluating hardware telemetry...");
+  }, [isLoading, setProcessing]);
   const [result, setResult] = useState<DiagnosticResponse | null>(null);
   const [isRecordingAudio, setIsRecordingAudio] = useState(false);
 

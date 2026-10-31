@@ -3,7 +3,7 @@
 @import "@xyflow/react/dist/style.css";
 
 :root {
-  /* Exact NotebookLM / MECH-G Color System */
+  /* Exact MECH-G Obsidian Color System */
   --bg-root: #0B0B0C;
   --bg-island: #18181A;
   --bg-island-surface: #1E1F23;
@@ -18,8 +18,9 @@
   --accent-blue: #3B82F6;
   --accent-purple: #8B5CF6;
   --accent-cyan: #22D3EE;
+  --accent-amber: #F59E0B;
 
-  /* Industrial Diagnostics Semantic Colors */
+  /* Industrial Semantic Colors */
   --bg-dark: #101318;
   --bg-charcoal: #171A21;
   --bg-slate: #252B35;
@@ -31,9 +32,9 @@
   --border-slate: #252B35;
   --border-highlight: #F2B544;
 
-  --status-success: #279C70;
-  --status-warning: #D99A29;
-  --status-error: #D94D4D;
+  --status-success: #10B981;
+  --status-warning: #F59E0B;
+  --status-error: #EF4444;
 
   /* Legacy aliases for backward compatibility */
   --bg-main: #0B0B0C;
@@ -41,14 +42,124 @@
   --bg-secondary: #1E1F23;
 }
 
-body {
+/* Global Font & Typography Rules matching Google Sans / Plus Jakarta Sans */
+html, body {
   background-color: var(--bg-root);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.012em;
   overflow: hidden;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+  letter-spacing: -0.024em;
+}
+
+/* Sleek Modern AI Ambient Plasma Flame Animations */
+@keyframes flame-drift-1 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate3d(50px, -40px, 0) scale(1.22) rotate(14deg);
+  }
+  66% {
+    transform: translate3d(-35px, 25px, 0) scale(0.9) rotate(-10deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes flame-drift-2 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate3d(-60px, 45px, 0) scale(0.85) rotate(-16deg);
+  }
+  66% {
+    transform: translate3d(55px, -30px, 0) scale(1.18) rotate(12deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes flame-drift-3 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.92);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate3d(30px, -50px, 0) scale(1.28);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.92);
+    opacity: 0.35;
+  }
+}
+
+@keyframes flame-pulse-glow {
+  0%, 100% {
+    opacity: 0.6;
+    filter: blur(90px) brightness(1);
+  }
+  50% {
+    opacity: 0.95;
+    filter: blur(115px) brightness(1.35);
+  }
+}
+
+@keyframes flame-wave {
+  0% {
+    transform: translateX(0) scaleY(1);
+  }
+  50% {
+    transform: translateX(-25%) scaleY(1.3);
+  }
+  100% {
+    transform: translateX(0) scaleY(1);
+  }
+}
+
+@keyframes ember-rise {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-200px) scale(1.3);
+    opacity: 0;
+  }
+}
+
+.flame-orb-1 {
+  animation: flame-drift-1 16s ease-in-out infinite, flame-pulse-glow 8s ease-in-out infinite;
+}
+
+.flame-orb-2 {
+  animation: flame-drift-2 20s ease-in-out infinite, flame-pulse-glow 10s ease-in-out infinite;
+}
+
+.flame-orb-3 {
+  animation: flame-drift-3 14s ease-in-out infinite;
+}
+
+.flame-wave-motion {
+  animation: flame-wave 12s ease-in-out infinite;
 }
 
 /* NotebookLM Floating Island Styling */
