@@ -3,6 +3,11 @@ import os
 from pathlib import Path
 import uvicorn
 
+# Configure UTF-8 encoding for Windows standard output
+if sys.platform.startswith("win"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 # Add backend directory to sys.path
 backend_dir = Path(__file__).parent / "backend"
 sys.path.insert(0, str(backend_dir))
@@ -11,11 +16,11 @@ if __name__ == "__main__":
     from app.config import settings
 
     print("=" * 70)
-    print("🚀 FIELD ENGINEERING & HARDWARE DIAGNOSTIC ENGINE (FastAPI)")
-    print(f"📡 API Server: http://{settings.host}:{settings.port}")
-    print(f"📖 Swagger Docs: http://localhost:{settings.port}/docs")
-    print(f"🧠 OKF Knowledge Base: {settings.resolved_okf_dir}")
-    print(f"🤖 Model: {settings.gemma_model}")
+    print("[*] FIELD ENGINEERING & HARDWARE DIAGNOSTIC ENGINE (FastAPI)")
+    print(f"[*] API Server: http://{settings.host}:{settings.port}")
+    print(f"[*] Swagger Docs: http://localhost:{settings.port}/docs")
+    print(f"[*] OKF Knowledge Base: {settings.resolved_okf_dir}")
+    print(f"[*] Model: {settings.gemma_model}")
     print("=" * 70)
 
     uvicorn.run(
