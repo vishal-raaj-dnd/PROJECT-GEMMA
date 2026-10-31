@@ -5,10 +5,13 @@ from pathlib import Path
 from app.main import app
 from app.config import settings
 
-client = TestClient(app)
+@pytest.fixture
+def client():
+    with TestClient(app) as c:
+        yield c
 
 
-def test_documents_endpoint():
+def test_documents_endpoint(client):
     response = client.get("/api/documents")
     assert response.status_code == 200
     docs = response.json()
@@ -19,7 +22,7 @@ def test_documents_endpoint():
         assert "status" in docs[0]
 
 
-def test_react_flow_graph_endpoint():
+def test_react_flow_graph_endpoint(client):
     response = client.get("/api/graph/react-flow")
     assert response.status_code == 200
     data = response.json()
@@ -37,7 +40,7 @@ def test_react_flow_graph_endpoint():
     assert "category" in first_node["data"]
 
 
-def test_graph_search_and_neighborhood():
+def test_graph_search_and_neighborhood(client):
     # Search
     search_res = client.get("/api/graph/search?q=valve")
     assert search_res.status_code == 200
@@ -57,7 +60,7 @@ def test_graph_search_and_neighborhood():
         assert "edges" in neigh_data
 
 
-def test_conversations_and_chat_streaming():
+def test_conversations_and_chat_streaming(client):
     # 1. Create conversation
     create_res = client.post("/api/chat/conversations", json={"title": "Test Hydraulic Consultation"})
     assert create_res.status_code == 200

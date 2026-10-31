@@ -107,3 +107,4 @@ export const GlobalFlameBackground: React.FC<{ isProcessing: boolean; status: st
     </div>
   );
 };
+
