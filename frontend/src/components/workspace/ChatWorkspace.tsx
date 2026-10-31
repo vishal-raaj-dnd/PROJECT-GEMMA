@@ -63,60 +63,114 @@ function sanitizeMermaid(raw: string): string {
     cleaned = `graph TD\n${cleaned}`;
   }
 
+  // If it's a sequenceDiagram, stateDiagram, etc., don't reformat node edges
+  if (!cleaned.startsWith("graph ") && !cleaned.startsWith("flowchart ")) {
+    return cleaned;
+  }
+
   const nodeMap = new Map<string, string>();
   let idCounter = 1;
 
-  const getNodeStr = (part: string): string => {
+  const sanitizeLabel = (lbl: string): string => {
+    return lbl
+      .replace(/"/g, "'")
+      .replace(/&/g, "and")
+      .replace(/\[/g, "(")
+      .replace(/\]/g, ")")
+      .trim();
+  };
+
+  const getOrCreateId = (text: string): string => {
+    const cleanText = text.trim();
+    if (!nodeMap.has(cleanText)) {
+      const slug = cleanText.replace(/[^a-zA-Z0-9]/g, "").slice(0, 14) || `node${idCounter}`;
+      nodeMap.set(cleanText, `n_${idCounter}_${slug}`);
+      idCounter++;
+    }
+    return nodeMap.get(cleanText)!;
+  };
+
+  const formatNodePart = (part: string): string => {
     const s = part.trim();
-    // If already has brackets like A["Label"] or A[Label]
-    if (s.includes("[") && s.includes("]")) {
-      return s.replace(/&/g, "and");
+    if (!s) return s;
+
+    // Pattern 1: Already has brackets like ID["Label"] or ID[Label]
+    const bracketMatch = s.match(/^([a-zA-Z0-9_\-]+)\s*\["?(.*?)"?\]$/);
+    if (bracketMatch) {
+      const [, id, label] = bracketMatch;
+      return `${id}["${sanitizeLabel(label)}"]`;
     }
 
-    // If wrapped in quotes: "something"
+    // Pattern 2: Round brackets ID("Label") or ID(Label)
+    const roundMatch = s.match(/^([a-zA-Z0-9_\-]+)\s*\("?(.*?)"?"?\)$/);
+    if (roundMatch) {
+      const [, id, label] = roundMatch;
+      return `${id}("${sanitizeLabel(label)}")`;
+    }
+
+    // Pattern 3: Curly brackets ID{"Label"} or ID{Label}
+    const curlyMatch = s.match(/^([a-zA-Z0-9_\-]+)\s*\{"?(.*?)"?\}$/);
+    if (curlyMatch) {
+      const [, id, label] = curlyMatch;
+      return `${id}{"${sanitizeLabel(label)}"}`;
+    }
+
+    // Pattern 4: Wrapped in quotes "Label with spaces"
     if (s.startsWith('"') && s.endsWith('"') && s.length >= 2) {
-      const content = s.slice(1, -1).trim();
-      if (!nodeMap.has(content)) {
-        const slug = content.replace(/[^a-zA-Z0-9]/g, "").slice(0, 12) || `node${idCounter}`;
-        nodeMap.set(content, `n_${idCounter}_${slug}`);
-        idCounter++;
-      }
-      const nid = nodeMap.get(content);
-      const safeContent = content.replace(/"/g, "'").replace(/&/g, "and");
-      return `${nid}["${safeContent}"]`;
+      const label = s.slice(1, -1);
+      const id = getOrCreateId(label);
+      return `${id}["${sanitizeLabel(label)}"]`;
     }
 
-    return s;
+    // Pattern 5: Single token with no spaces (e.g. A, Node1, my_node)
+    if (/^[a-zA-Z0-9_\-]+$/.test(s)) {
+      return s;
+    }
+
+    // Pattern 6: Plain text with spaces (e.g. Backend Curriculum)
+    const id = getOrCreateId(s);
+    return `${id}["${sanitizeLabel(s)}"]`;
   };
 
   const lines = cleaned.split("\n");
-  // Arrow pattern matching standard Mermaid connectors
-  const arrowRegex = /(\s*(?:-->|---|==>|-\.->|--\s*.*?\s*-->)\s*)/;
+  // Comprehensive arrow regex matching -->, ->, ==>, -.->, ---, and labeled arrows like -->|text| or -- text -->
+  const arrowRegex = /(\s*(?:-->\|.*?\||--\s*.*?\s*-->|-->|->|==>|-\.->|---|--)\s*)/;
 
   const transformedLines = lines.map((line) => {
     const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("graph ") || trimmed.startsWith("flowchart ")) {
+    if (
+      !trimmed ||
+      trimmed.startsWith("graph ") ||
+      trimmed.startsWith("flowchart ") ||
+      trimmed.startsWith("subgraph ") ||
+      trimmed === "end" ||
+      trimmed.startsWith("classDef ") ||
+      trimmed.startsWith("class ") ||
+      trimmed.startsWith("style ") ||
+      trimmed.startsWith("%%")
+    ) {
       return line;
     }
 
-    // Split line by connectors while keeping separators
     const parts = line.split(arrowRegex);
     if (parts.length >= 3) {
       return parts
         .map((p, idx) => {
           if (idx % 2 === 1) {
-            // Arrow connector
+            // Standardize single arrow -> to -->
+            if (p.trim() === "->") return p.replace("->", "-->");
             return p;
           }
           const leadingWs = p.match(/^\s*/)?.[0] || "";
           const trailingWs = p.match(/\s*$/)?.[0] || "";
-          const formatted = getNodeStr(p);
+          const formatted = formatNodePart(p);
           return leadingWs + formatted + trailingWs;
         })
         .join("");
     }
 
-    return line.replace(/&/g, "and");
+    // Single standalone node definition on its own line
+    return formatNodePart(line);
   });
 
   return transformedLines.join("\n");

@@ -289,6 +289,7 @@ export const WorkspacePage: React.FC = () => {
       <div className="flex-1 flex overflow-hidden p-3 pt-1 gap-3 relative">
         {/* Left Floating Island: Sources */}
         <div
+          data-tour="sources"
           style={{ width: leftCollapsed ? 48 : leftWidth }}
           className="h-full shrink-0 flex flex-col min-h-0 transition-[width] duration-150 ease-out relative"
         >
@@ -313,20 +314,23 @@ export const WorkspacePage: React.FC = () => {
         </div>
 
         {/* Center Column: Gemma Conversational Canvas */}
-        <ChatWorkspace
-          messages={messages}
-          isStreaming={isStreaming}
-          streamingStatus={streamingStatus}
-          onSendMessage={handleSendMessage}
-          onStopStreaming={handleStopStreaming}
-          onNewChat={handleNewChat}
-          selectedSources={selectedSources}
-          onCitationClick={handleCitationClick}
-          workspaceTitle="MECH-G Master Documentation"
-        />
+        <div data-tour="chat" className="flex-1 h-full min-h-0 flex flex-col overflow-hidden relative">
+          <ChatWorkspace
+            messages={messages}
+            isStreaming={isStreaming}
+            streamingStatus={streamingStatus}
+            onSendMessage={handleSendMessage}
+            onStopStreaming={handleStopStreaming}
+            onNewChat={handleNewChat}
+            selectedSources={selectedSources}
+            onCitationClick={handleCitationClick}
+            workspaceTitle="MECH-G Master Documentation"
+          />
+        </div>
 
         {/* Right Floating Island: Studio > Mindmap */}
         <div
+          data-tour="graph"
           style={{ width: rightCollapsed ? 48 : rightWidth }}
           className="h-full shrink-0 flex flex-col min-h-0 transition-[width] duration-150 ease-out relative"
         >

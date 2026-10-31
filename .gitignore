@@ -29,3 +29,10 @@ Thumbs.db
 backend/data/raw_docs/
 *.db
 backend/data/workspace.db
+
+video/raw_recordings/
+video/**/*.wav
+video/**/*.mp4
+video/**/*.webm
+video/audio/*.wav
+video/scenes/

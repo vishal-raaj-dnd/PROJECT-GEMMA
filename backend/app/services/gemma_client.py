@@ -187,9 +187,9 @@ class GemmaClient:
             return VisualFeatureExtraction(
                 identified_component="Proportional Pressure Relief Valve V2",
                 part_number="PRV-992-B",
-                observed_defect="Radial hydraulic oil weeping around solenoid hex collar; Viton O-ring seal extruded.",
-                visual_indicators=["High-pressure hydraulic fluid seep", "Collar discoloration"],
-                confidence=0.92
+                observed_defect="Extruded Viton 90-durometer O-ring seal with high-pressure fluid weepage around solenoid hex collar.",
+                visual_indicators=["High-pressure hydraulic fluid seep", "Collar discoloration", "Extruded Viton seal"],
+                confidence=0.96
             )
         elif "pcb" in text or "capacitor" in text or "board" in text:
             return VisualFeatureExtraction(
@@ -197,7 +197,7 @@ class GemmaClient:
                 part_number="PCB-PITCH-CTRL-V1",
                 observed_defect="Thermal scorching near 24V filter capacitor C14; blown electrolyte seal.",
                 visual_indicators=["Brown scorch ring", "Bulging aluminum capacitor top"],
-                confidence=0.95
+                confidence=0.94
             )
         return VisualFeatureExtraction(
             identified_component="Industrial Machinery Assembly",
@@ -208,6 +208,51 @@ class GemmaClient:
         )
 
     def _fallback_remediation_synthesis(self, component_name: str, defect: str) -> SynthesizedRemediation:
+        c_lower = component_name.lower()
+        if "valve" in c_lower or "prv" in c_lower or "relief" in c_lower:
+            return SynthesizedRemediation(
+                title="PRV Series Solenoid Valve Seal Replacement & Torque Recalibration",
+                estimated_duration_minutes=40,
+                steps=[
+                    SynthesizedRepairStep(
+                        step_number=1,
+                        instruction="Disconnect 24V DC solenoid plug and verify 0 pressure on gauge PG-02.",
+                        torque_spec=None,
+                        tool_required="CAT IV Multimeter",
+                        hazard_warning="Residual hydraulic and electrical energy",
+                        citation="[^safety/lockout_tagout_hydraulics.md#isolation-procedure]"
+                    ),
+                    SynthesizedRepairStep(
+                        step_number=2,
+                        instruction="Loosen 4x M10 hex socket head cap screws in cross-diagonal sequence.",
+                        torque_spec="35 Nm upon reassembly",
+                        tool_required="8mm Hex Bit Socket",
+                        hazard_warning="Support valve body to prevent manifold port distortion",
+                        citation="[^procedures/valve_seal_replacement.md#disassembly]"
+                    ),
+                    SynthesizedRepairStep(
+                        step_number=3,
+                        instruction="Clean manifold cavity, remove damaged Viton O-ring with brass pick, lubricate new seal with ISO VG 46 oil.",
+                        torque_spec=None,
+                        tool_required="Non-marring Brass O-Ring Pick",
+                        hazard_warning="PTFE backup ring must face low-pressure return side",
+                        citation="[^procedures/valve_seal_replacement.md#reassembly-and-torque]"
+                    ),
+                    SynthesizedRepairStep(
+                        step_number=4,
+                        instruction="Seat valve flush into manifold. Torque 4x M10 fasteners in 3 incremental passes: 15 Nm, 25 Nm, and final torque of exactly 35 Nm.",
+                        torque_spec="35 Nm (M10 Class 10.9 in 3 passes: 15, 25, 35 Nm)",
+                        tool_required="Calibrated Digital Torque Wrench",
+                        hazard_warning="Do not exceed 35 Nm or flange threads will strip",
+                        citation="[^components/proportional_relief_valve_v2.md#specifications]"
+                    )
+                ],
+                post_maintenance_verification=[
+                    "Pressurize yaw circuit to 210 bar; verify zero pressure decay over 10 min.",
+                    "Perform visual inspection for radial weepage around hex collar."
+                ]
+            )
+
         return SynthesizedRemediation(
             title=f"Standard Field Remediation: {component_name}",
             estimated_duration_minutes=45,
@@ -242,4 +287,5 @@ class GemmaClient:
                 "Log maintenance record in digital field register."
             ]
         )
+
 

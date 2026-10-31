@@ -10,8 +10,10 @@ import {
   ShieldAlert,
   UploadCloud,
   Sparkles,
-  Check
+  Check,
+  HelpCircle
 } from "lucide-react";
+import { useTour } from "../../context/TourContext";
 
 interface TopToolbarProps {
   title?: string;
@@ -26,6 +28,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
   activeModule: propActiveModule,
 }) => {
   const location = useLocation();
+  const { startTour } = useTour();
   const [showNavMenu, setShowNavMenu] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -85,6 +88,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
         </Link>
         <Link
           to="/diagnostics"
+          data-tour="nav-diagnostics"
           className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
             activeModule === "diagnostics"
               ? "bg-[#24252B] text-white shadow-sm border border-[#3A3B43]"
@@ -107,6 +111,7 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
         </Link>
         <Link
           to="/safety"
+          data-tour="nav-safety"
           className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
             activeModule === "safety"
               ? "bg-[#24252B] text-white shadow-sm border border-[#3A3B43]"
@@ -215,6 +220,16 @@ export const TopToolbar: React.FC<TopToolbarProps> = ({
         >
           {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
           <span className="hidden sm:inline">{copiedLink ? "Copied" : "Share"}</span>
+        </button>
+
+        {/* Tour / Guide Button */}
+        <button
+          onClick={startTour}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-normal text-[#22D3EE] hover:text-white bg-[#22D3EE]/10 hover:bg-[#22D3EE]/20 border border-[#22D3EE]/30 transition-all cursor-pointer"
+          title="Start interactive walkthrough"
+        >
+          <HelpCircle className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline font-medium">Tour</span>
         </button>
 
         {/* Settings */}

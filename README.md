@@ -107,6 +107,10 @@ flowchart TD
 ### 6. 🔥 Ambient AI Plasma Flame Animation
 - **Global Neural Feedback**: Radiant, sleek, modern background plasma flame (cyan, violet, and amber embers) that gracefully illuminates while Gemma is thinking, evaluating telemetry, or compiling documents.
 
+### 7. 🧭 Guided Spotlight Walkthrough & Tour
+- **First-Time User Onboarding**: Dynamic spotlight overlay highlighting the 3 primary floating islands (Document Knowledge Base, Citation-Grounded Assistant, Live Knowledge Graph) and industrial modules.
+- **Always Accessible**: Relaunch anytime using the **Tour** button in the top navigation bar. Persists completion status in `localStorage`.
+
 ---
 
 ## 💻 Tech Stack
@@ -126,13 +130,35 @@ flowchart TD
 
 ## ⚡ Quick Start Guide
 
-### 1. Clone the Repository
+### Option A: One-Command Docker Setup (Recommended)
+Run the complete MECH-G stack (FastAPI backend + Vite/Nginx frontend) with Docker Compose:
+
+```bash
+# 1. Clone repository
+git clone https://github.com/vishal-raaj-dnd/PROJECT-GEMMA.git
+cd PROJECT-GEMMA
+
+# 2. Copy environment file and add your GEMMA_API_KEY
+cp backend/.env.example backend/.env
+
+# 3. Spin up full stack
+docker compose up --build
+```
+- **Web UI & Workspace**: [http://localhost:3000](http://localhost:3000)
+- **FastAPI Backend**: [http://localhost:8000](http://localhost:8000)
+- **Interactive OpenAPI Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+### Option B: Local Development Setup
+
+#### 1. Clone the Repository
 ```bash
 git clone https://github.com/vishal-raaj-dnd/PROJECT-GEMMA.git
 cd PROJECT-GEMMA
 ```
 
-### 2. Configure Backend Environment
+#### 2. Configure Backend Environment
 Create `backend/.env` with your Google GenAI API key:
 ```bash
 cp backend/.env.example backend/.env
@@ -152,7 +178,7 @@ CORS_ORIGINS=http://localhost:3000,http://localhost:5173
 ```
 *(Note: If no API key is supplied, MECH-G runs in offline fallback mode using deterministic edge heuristics, ensuring 100% offline development).*
 
-### 3. Start Backend Server
+#### 3. Start Backend Server
 ```powershell
 # Using the pre-configured virtual environment:
 .\.venv\Scripts\python.exe run_backend.py
@@ -160,7 +186,7 @@ CORS_ORIGINS=http://localhost:3000,http://localhost:5173
 Backend will start on **`http://localhost:8000`**.  
 Interactive OpenAPI Swagger docs: **`http://localhost:8000/docs`**
 
-### 4. Start Frontend Client
+#### 4. Start Frontend Client
 ```bash
 cd frontend
 npm install
@@ -220,6 +246,14 @@ All engineering assertions synthesized by MECH-G reference deterministic knowled
 Verify hydraulic accumulator pressure is below 5 PSI [^safety/lockout_tagout_hydraulics.md#zero-energy-state].
 Tighten hex collar bolts to 45 Nm using calibrated torque wrench [^tools/calibrated_torque_wrench.md#specifications].
 ```
+
+---
+
+## 🤝 Contributing & Community Bundles
+
+We welcome contributions of code, industrial documentation, fault trees, and OKF knowledge bundles!
+- Review [CONTRIBUTING.md](./CONTRIBUTING.md) for local development workflows and PR conventions.
+- Check out the OKF Specification above to create custom machinery knowledge packs.
 
 ---
 
