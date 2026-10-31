@@ -68,26 +68,12 @@ export const DiagnosticWorkbench: React.FC = () => {
   };
 
   return (
-    <section id="workbench" className="py-24 bg-[#0A0A0C] hairline-b">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-mono uppercase tracking-widest text-[#6C4CF1] font-semibold">
-            Live Diagnostic Engine
-          </span>
-          <h2 className="mt-4 text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            Try the Model & Check Results
-          </h2>
-          <p className="mt-4 text-base text-[#9A9AA2]">
-            Test the multimodal model live. Select pre-loaded sample equipment images or upload your own physical
-            photos. Gemma 4 diagnoses the component and enforces OSHA Lockout/Tagout gates.
-          </p>
-        </div>
-
+    <section id="workbench" className="py-8 bg-[#0B0B0E]">
+      <div className="max-w-7xl mx-auto px-0">
         {/* Sample Equipment Selector */}
-        <div className="mb-10 p-5 rounded-3xl bg-[#111114] border border-white/[0.08]">
-          <div className="text-xs font-mono text-[#9A9AA2] uppercase tracking-wider mb-3 flex items-center gap-2">
-            <Layers className="w-4 h-4 text-[#6C4CF1]" />
+        <div className="mb-8 p-5 rounded-xl bg-[#121316] border border-[#2A2A2E]">
+          <div className="text-xs font-mono text-[#9CA3AF] uppercase tracking-wider mb-3 flex items-center gap-2">
+            <Layers className="w-4 h-4 text-[#FF6B35]" />
             <span>Select Pre-Loaded Industrial Sample Image & Query:</span>
           </div>
 
@@ -96,21 +82,21 @@ export const DiagnosticWorkbench: React.FC = () => {
               <button
                 key={s.id}
                 onClick={() => handleSelectSample(s)}
-                className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-4 ${
+                className={`p-4 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-4 ${
                   activeSampleId === s.id
-                    ? "bg-[#0A0A0C] border-[#6C4CF1] shadow-lg shadow-[#6C4CF1]/10 ring-1 ring-[#6C4CF1]/40"
-                    : "bg-[#0A0A0C]/60 border-white/[0.06] hover:border-white/[0.14] hover:bg-[#0A0A0C]"
+                    ? "bg-[#0B0B0E] border-[#FF6B35] shadow-lg shadow-[#FF6B35]/10 ring-1 ring-[#FF6B35]/40"
+                    : "bg-[#0B0B0E]/60 border-[#2A2A2E] hover:border-[#FF6B35]/40 hover:bg-[#0B0B0E]"
                 }`}
               >
                 <img
                   src={s.imagePath}
                   alt={s.title}
-                  className="w-16 h-16 rounded-xl object-cover border border-white/[0.1] shrink-0"
+                  className="w-16 h-16 rounded-lg object-cover border border-[#2A2A2E] shrink-0"
                 />
                 <div className="min-w-0">
-                  <div className="text-[11px] font-mono font-bold text-[#C9B8FF] truncate">{s.subsystem}</div>
-                  <div className="text-sm font-bold text-white truncate">{s.title}</div>
-                  <div className="text-xs text-[#9A9AA2] truncate mt-0.5">{s.description}</div>
+                  <div className="text-[11px] font-mono font-bold text-[#FF6B35] truncate">{s.subsystem}</div>
+                  <div className="text-sm font-bold text-[#F5F5F7] truncate">{s.title}</div>
+                  <div className="text-xs text-[#9CA3AF] truncate mt-0.5">{s.description}</div>
                 </div>
               </button>
             ))}
@@ -121,43 +107,43 @@ export const DiagnosticWorkbench: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Image & Query Input */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="p-6 rounded-3xl bg-[#111114] border border-white/[0.08] shadow-2xl">
+            <div className="p-6 rounded-xl bg-[#121316] border border-[#2A2A2E] shadow-xl">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-mono uppercase text-[#9A9AA2] tracking-wider">
+                <span className="text-xs font-mono uppercase text-[#9CA3AF] tracking-wider">
                   Hardware Visual Input
                 </span>
-                <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0A0A0C] hover:bg-white/[0.08] text-xs font-mono text-white transition-colors cursor-pointer border border-white/[0.12]">
-                  <Upload className="w-3.5 h-3.5 text-[#6C4CF1]" />
+                <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0B0B0E] hover:bg-[#16171B] text-xs font-mono text-white transition-colors cursor-pointer border border-[#2A2A2E]">
+                  <Upload className="w-3.5 h-3.5 text-[#FF6B35]" />
                   <span>Upload Image</span>
                   <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                 </label>
               </div>
 
               {selectedImage ? (
-                <div className="relative rounded-2xl overflow-hidden border border-white/[0.1] aspect-video bg-[#0A0A0C]">
+                <div className="relative rounded-lg overflow-hidden border border-[#2A2A2E] aspect-video bg-[#0B0B0E]">
                   <img src={selectedImage} alt="Faulty Component" className="w-full h-full object-cover" />
-                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[#0A0A0C]/80 backdrop-blur-md text-[10px] font-mono text-[#C9B8FF] border border-white/[0.12]">
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-[#0B0B0E]/90 text-[10px] font-mono text-[#FF6B35] border border-[#2A2A2E]">
                     Active Input
                   </div>
                 </div>
               ) : (
-                <div className="rounded-2xl border border-dashed border-white/[0.1] p-10 text-center bg-[#0A0A0C]">
-                  <Camera className="w-8 h-8 text-[#9A9AA2] mx-auto mb-2 opacity-50" />
-                  <p className="text-xs text-[#9A9AA2] font-mono">No image loaded. Pick a sample above or drop a file.</p>
+                <div className="rounded-lg border border-dashed border-[#2A2A2E] p-10 text-center bg-[#0B0B0E]">
+                  <Camera className="w-8 h-8 text-[#9CA3AF] mx-auto mb-2 opacity-50" />
+                  <p className="text-xs text-[#9CA3AF] font-mono">No image loaded. Pick a sample above or drop a file.</p>
                 </div>
               )}
             </div>
 
-            <div className="p-6 rounded-3xl bg-[#111114] border border-white/[0.08] shadow-2xl space-y-4">
+            <div className="p-6 rounded-xl bg-[#121316] border border-[#2A2A2E] shadow-xl space-y-4">
               <div>
-                <label className="block text-xs font-mono uppercase text-[#9A9AA2] tracking-wider mb-2">
+                <label className="block text-xs font-mono uppercase text-[#9CA3AF] tracking-wider mb-2">
                   Technician Query / Voice Note:
                 </label>
                 <textarea
                   value={queryText}
                   onChange={(e) => setQueryText(e.target.value)}
                   rows={3}
-                  className="w-full p-4 rounded-2xl bg-[#0A0A0C] border border-white/[0.1] text-sm text-white focus:outline-none focus:border-[#6C4CF1] font-sans leading-relaxed resize-none transition-colors"
+                  className="w-full p-3.5 rounded-lg bg-[#0B0B0E] border border-[#2A2A2E] text-xs font-mono text-[#F5F5F7] focus:outline-none focus:border-[#FF6B35] leading-relaxed resize-none transition-colors"
                   placeholder="Describe observed symptoms, error codes, or part numbers..."
                 />
               </div>
@@ -165,9 +151,9 @@ export const DiagnosticWorkbench: React.FC = () => {
               <button
                 onClick={handleRunDiagnostic}
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-full bg-white hover:bg-slate-200 text-[#0A0A0C] font-bold text-sm tracking-tight shadow-xl transition-all cursor-pointer disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-lg bg-[#FF6B35] hover:bg-[#F97316] text-white font-medium text-xs tracking-tight shadow-md transition-all cursor-pointer disabled:opacity-50"
               >
-                <Sparkles className="w-4 h-4 text-[#6C4CF1]" />
+                <Sparkles className="w-4 h-4 text-white" />
                 {isLoading ? "Gemma 4 Multimodal Reasoning..." : "Run Diagnostic Engine (Image + OKF)"}
               </button>
             </div>
@@ -178,11 +164,11 @@ export const DiagnosticWorkbench: React.FC = () => {
             {result ? (
               <>
                 {/* Detected Component Card */}
-                <div className="p-6 sm:p-8 rounded-3xl bg-[#111114] border border-white/[0.08] shadow-2xl">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
+                <div className="p-6 rounded-xl bg-[#121316] border border-[#2A2A2E] shadow-xl">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#2A2A2E]">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#6C4CF1]/20 text-[#C9B8FF] border border-[#6C4CF1]/30">
+                        <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#FF6B35]/20 text-[#FF6B35] border border-[#FF6B35]/30">
                           DETECTED COMPONENT
                         </span>
                         {result.detected_component.part_number && (
@@ -191,20 +177,20 @@ export const DiagnosticWorkbench: React.FC = () => {
                           </span>
                         )}
                       </div>
-                      <h3 className="text-xl sm:text-2xl font-bold text-white mt-1.5">
+                      <h3 className="text-xl font-bold text-[#F5F5F7] mt-1.5">
                         {result.detected_component.name}
                       </h3>
                     </div>
 
-                    <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0A0A0C] border border-white/[0.08] text-xs font-mono">
-                      <span className="text-[#9A9AA2]">Confidence:</span>
-                      <strong className="text-[#34D399]">
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-[#0B0B0E] border border-[#2A2A2E] text-xs font-mono">
+                      <span className="text-[#9CA3AF]">Confidence:</span>
+                      <strong className="text-[#10B981]">
                         {Math.round(result.detected_component.confidence * 100)}%
                       </strong>
                     </div>
                   </div>
 
-                  <div className="mt-4 text-sm text-[#9A9AA2] leading-relaxed">
+                  <div className="mt-4 text-xs font-mono text-[#9CA3AF] leading-relaxed">
                     <strong className="text-white block mb-1">Visual Defect Diagnosis:</strong>
                     {result.detected_component.observed_defect}
                   </div>
@@ -214,7 +200,7 @@ export const DiagnosticWorkbench: React.FC = () => {
                       {result.detected_component.visual_indicators.map((vi, idx) => (
                         <span
                           key={idx}
-                          className="px-2.5 py-1 rounded-full bg-[#0A0A0C] text-[11px] font-mono text-[#C9B8FF] border border-white/[0.08]"
+                          className="px-2.5 py-1 rounded-md bg-[#0B0B0E] text-[10px] font-mono text-[#FF6B35] border border-[#2A2A2E]"
                         >
                           {vi}
                         </span>
@@ -223,7 +209,7 @@ export const DiagnosticWorkbench: React.FC = () => {
                   )}
                 </div>
 
-                {/* Safety Gate Modal: Blocks repair steps until LOTO confirmed */}
+                {/* Safety Gate Modal */}
                 {result.safety_interlocks.required && !result.safety_interlocks.acknowledged && (
                   <SafetyGateModal
                     safety={result.safety_interlocks}
@@ -232,7 +218,7 @@ export const DiagnosticWorkbench: React.FC = () => {
                   />
                 )}
 
-                {/* Remediation Plan: Appears once LOTO signed off */}
+                {/* Remediation Plan */}
                 {(!result.safety_interlocks.required || result.safety_interlocks.acknowledged) &&
                   result.remediation_plan && (
                     <RemediationView
@@ -243,11 +229,11 @@ export const DiagnosticWorkbench: React.FC = () => {
                   )}
               </>
             ) : (
-              <div className="p-16 rounded-3xl bg-[#111114]/50 border border-dashed border-white/[0.08] text-center">
-                <Sparkles className="w-10 h-10 text-[#6C4CF1] mx-auto mb-3 opacity-60" />
-                <h3 className="text-lg font-bold text-white">Diagnostic Engine Standby</h3>
-                <p className="text-xs text-[#9A9AA2] max-w-sm mx-auto mt-2 leading-relaxed">
-                  Click <strong>"Run Diagnostic Engine"</strong> on the left to trigger Gemma 4 multimodal inspection,
+              <div className="p-14 rounded-xl bg-[#121316]/50 border border-dashed border-[#2A2A2E] text-center">
+                <Sparkles className="w-8 h-8 text-[#FF6B35] mx-auto mb-3 opacity-70" />
+                <h3 className="text-base font-semibold text-[#F5F5F7]">Diagnostic Engine Standby</h3>
+                <p className="text-xs text-[#9CA3AF] max-w-sm mx-auto mt-2 leading-relaxed font-mono">
+                  Click <strong className="text-white">"Run Diagnostic Engine"</strong> on the left to trigger Gemma 4 multimodal inspection,
                   traverse the in-memory OKF graph, and enforce Lockout/Tagout safety gates.
                 </p>
               </div>

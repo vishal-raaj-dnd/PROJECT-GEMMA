@@ -14,22 +14,22 @@ export const RemediationView: React.FC<RemediationViewProps> = ({ plan, citation
   };
 
   return (
-    <div className="rounded-3xl border border-[#34D399]/30 bg-[#111114] p-6 sm:p-8 shadow-2xl relative">
+    <div className="rounded-xl border border-[#10B981]/40 bg-[#121316] p-6 sm:p-8 shadow-xl relative">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-[#2A2A2E]">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#34D399]/15 text-[#34D399] border border-[#34D399]/30 uppercase">
+            <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 uppercase">
               Safety Verified & Unlocked
             </span>
-            <span className="text-xs font-mono text-[#9A9AA2]">OSHA 1910.147 Compliant</span>
+            <span className="text-xs font-mono text-[#9CA3AF]">OSHA 1910.147 Compliant</span>
           </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">{plan.title}</h3>
+          <h3 className="text-xl sm:text-2xl font-bold text-[#F5F5F7] tracking-tight">{plan.title}</h3>
         </div>
 
         {plan.estimated_duration_minutes && (
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0A0A0C] border border-white/[0.08] text-xs font-mono text-[#9A9AA2]">
-            <Clock className="w-3.5 h-3.5 text-[#C9B8FF]" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0B0B0E] border border-[#2A2A2E] text-xs font-mono text-[#9CA3AF]">
+            <Clock className="w-3.5 h-3.5 text-[#FF6B35]" />
             <span>Est. Duration: <strong className="text-white">{plan.estimated_duration_minutes} mins</strong></span>
           </div>
         )}
@@ -38,19 +38,19 @@ export const RemediationView: React.FC<RemediationViewProps> = ({ plan, citation
       {/* Required Tools */}
       {plan.required_tools.length > 0 && (
         <div className="mt-6">
-          <div className="text-xs font-mono uppercase text-[#9A9AA2] tracking-wider mb-2 flex items-center gap-1.5">
-            <Wrench className="w-3.5 h-3.5 text-[#6C4CF1]" />
+          <div className="text-xs font-mono uppercase text-[#9CA3AF] tracking-wider mb-2 flex items-center gap-1.5">
+            <Wrench className="w-3.5 h-3.5 text-[#FF6B35]" />
             <span>Required Calibrated Tools & Materials:</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {plan.required_tools.map((t, idx) => (
               <div
                 key={idx}
-                className="p-3.5 rounded-2xl bg-[#0A0A0C] border border-white/[0.06] flex items-center justify-between text-xs"
+                className="p-3 rounded-lg bg-[#0B0B0E] border border-[#2A2A2E] flex items-center justify-between text-xs"
               >
                 <div>
                   <span className="font-semibold text-white block">{t.name}</span>
-                  {t.spec && <span className="text-[11px] font-mono text-[#9A9AA2]">{t.spec}</span>}
+                  {t.spec && <span className="text-[11px] font-mono text-[#9CA3AF]">{t.spec}</span>}
                 </div>
                 {t.citation && (
                   <button
@@ -58,7 +58,7 @@ export const RemediationView: React.FC<RemediationViewProps> = ({ plan, citation
                       const c = findCitation(t.citation!);
                       if (c) onSelectCitation(c);
                     }}
-                    className="p-1.5 rounded-lg bg-[#111114] hover:bg-[#6C4CF1]/20 text-[#C9B8FF] transition-colors cursor-pointer border border-white/[0.08]"
+                    className="p-1.5 rounded-md bg-[#16171B] hover:bg-[#FF6B35]/20 text-[#FF6B35] transition-colors cursor-pointer border border-[#2A2A2E]"
                     title="View Verified Citation"
                   >
                     <Bookmark className="w-3.5 h-3.5" />
@@ -72,7 +72,7 @@ export const RemediationView: React.FC<RemediationViewProps> = ({ plan, citation
 
       {/* Step-by-Step Sequence */}
       <div className="mt-8 space-y-4">
-        <div className="text-xs font-mono uppercase text-[#9A9AA2] tracking-wider">
+        <div className="text-xs font-mono uppercase text-[#9CA3AF] tracking-wider">
           Step-by-Step Remediation Sequence:
         </div>
 
@@ -81,30 +81,30 @@ export const RemediationView: React.FC<RemediationViewProps> = ({ plan, citation
           return (
             <div
               key={step.step_number}
-              className="p-5 rounded-2xl bg-[#0A0A0C] border border-white/[0.06] hover:border-white/[0.14] transition-all flex flex-col sm:flex-row items-start gap-4"
+              className="p-5 rounded-lg bg-[#0B0B0E] border border-[#2A2A2E] hover:border-[#FF6B35]/30 transition-all flex flex-col sm:flex-row items-start gap-4"
             >
-              <div className="w-8 h-8 rounded-full bg-[#6C4CF1]/15 text-[#C9B8FF] font-mono font-bold text-xs flex items-center justify-center shrink-0 border border-[#6C4CF1]/30">
+              <div className="w-7 h-7 rounded-md bg-[#FF6B35]/15 text-[#FF6B35] font-mono font-bold text-xs flex items-center justify-center shrink-0 border border-[#FF6B35]/30">
                 {step.step_number}
               </div>
 
               <div className="flex-1 space-y-2">
-                <p className="text-sm text-slate-200 leading-relaxed font-medium">{step.instruction}</p>
+                <p className="text-sm text-[#F5F5F7] leading-relaxed font-normal">{step.instruction}</p>
 
                 <div className="flex flex-wrap items-center gap-2 pt-1">
                   {step.torque_spec && (
-                    <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-[#6C4CF1]/20 text-[#C9B8FF] border border-[#6C4CF1]/40">
+                    <span className="px-2.5 py-0.5 rounded text-xs font-mono font-bold bg-[#FF6B35]/20 text-[#FF6B35] border border-[#FF6B35]/40">
                       TORQUE: {step.torque_spec}
                     </span>
                   )}
 
                   {step.tool_required && (
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-[#111114] text-[#9A9AA2] border border-white/[0.06]">
+                    <span className="px-2.5 py-0.5 rounded text-[11px] font-mono bg-[#16171B] text-[#9CA3AF] border border-[#2A2A2E]">
                       Tool: {step.tool_required}
                     </span>
                   )}
 
                   {step.hazard_warning && (
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-red-950/30 text-red-300 border border-red-500/20 flex items-center gap-1">
+                    <span className="px-2.5 py-0.5 rounded text-[11px] font-mono bg-red-950/40 text-red-300 border border-red-500/30 flex items-center gap-1">
                       <AlertTriangle className="w-3 h-3 text-red-400 shrink-0" />
                       {step.hazard_warning}
                     </span>
@@ -113,9 +113,9 @@ export const RemediationView: React.FC<RemediationViewProps> = ({ plan, citation
                   {matchedCitation && (
                     <button
                       onClick={() => onSelectCitation(matchedCitation)}
-                      className="ml-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-semibold bg-[#111114] text-[#C9B8FF] border border-[#6C4CF1]/30 hover:border-[#6C4CF1] transition-all cursor-pointer"
+                      className="ml-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-mono font-semibold bg-[#16171B] text-[#FF6B35] border border-[#FF6B35]/30 hover:border-[#FF6B35] transition-all cursor-pointer"
                     >
-                      <Bookmark className="w-3 h-3 text-[#6C4CF1]" />
+                      <Bookmark className="w-3 h-3 text-[#FF6B35]" />
                       <span>{matchedCitation.node_path.split("/").pop()}</span>
                     </button>
                   )}
@@ -128,14 +128,14 @@ export const RemediationView: React.FC<RemediationViewProps> = ({ plan, citation
 
       {/* Post-Maintenance Verification */}
       {plan.post_maintenance_verification.length > 0 && (
-        <div className="mt-8 pt-6 border-t border-white/[0.08]">
-          <div className="text-xs font-mono uppercase text-[#9A9AA2] tracking-wider mb-3">
+        <div className="mt-8 pt-6 border-t border-[#2A2A2E]">
+          <div className="text-xs font-mono uppercase text-[#9CA3AF] tracking-wider mb-3">
             Post-Maintenance Functional Sign-Off:
           </div>
           <div className="space-y-2">
             {plan.post_maintenance_verification.map((v, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-xs text-[#9A9AA2]">
-                <CheckCircle2 className="w-4 h-4 text-[#34D399] shrink-0" />
+              <div key={idx} className="flex items-center gap-3 text-xs text-[#9CA3AF]">
+                <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0" />
                 <span>{v}</span>
               </div>
             ))}

@@ -42,25 +42,25 @@ export const FAQSection: React.FC = () => {
   };
 
   return (
-    <section id="faq" className="py-24 bg-[#111114] hairline-b">
+    <section id="faq" className="py-24 bg-[#0B0B0E] border-t border-[#2A2A2E]">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Left Column (~40%): Eyebrow, Two-line headline, Contact line */}
           <div className="lg:col-span-5">
-            <span className="text-xs font-mono uppercase tracking-widest text-[#6C4CF1] font-semibold">
+            <span className="text-xs font-mono uppercase tracking-widest text-[#FF6B35] font-semibold">
               FAQ
             </span>
-            <h2 className="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+            <h2 className="mt-4 text-3xl sm:text-4xl font-extrabold tracking-tight text-[#F5F5F7] leading-tight">
               Common questions.
-              <span className="block text-[#9A9AA2] font-normal mt-1">
-                Everything you need to know.
+              <span className="block text-[#9CA3AF] font-normal mt-1">
+                Field engineering specifications.
               </span>
             </h2>
-            <p className="mt-8 text-sm text-[#9A9AA2]">
-              Anything else? Write to{" "}
+            <p className="mt-8 text-sm text-[#9CA3AF]">
+              Technical inquiry or custom OEM schema? Write to{" "}
               <a
                 href="mailto:fieldops@gemma-engine.dev"
-                className="text-white underline underline-offset-4 hover:text-[#6C4CF1] transition-colors"
+                className="text-white underline underline-offset-4 hover:text-[#FF6B35] transition-colors"
               >
                 fieldops@gemma-engine.dev
               </a>
@@ -68,7 +68,7 @@ export const FAQSection: React.FC = () => {
           </div>
 
           {/* Right Column (~60%): 5 Accordion questions separated by 1px hairlines */}
-          <div className="lg:col-span-7 divide-y divide-white/[0.08]">
+          <div className="lg:col-span-7 divide-y divide-[#2A2A2E]">
             {faqs.map((faq, idx) => {
               const isOpen = openIndex === idx;
               return (
@@ -77,14 +77,14 @@ export const FAQSection: React.FC = () => {
                     onClick={() => toggle(idx)}
                     className="flex items-center justify-between gap-4 cursor-pointer select-none group"
                   >
-                    <h3 className="text-lg font-medium text-white group-hover:text-slate-200 transition-colors pr-2">
+                    <h3 className="text-base sm:text-lg font-medium text-[#F5F5F7] group-hover:text-white transition-colors pr-2">
                       {faq.question}
                     </h3>
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all ${
                         isOpen
-                          ? "bg-[#6C4CF1] text-white shadow-md shadow-[#6C4CF1]/30"
-                          : "bg-white/[0.06] text-[#9A9AA2] group-hover:bg-white/[0.12] group-hover:text-white"
+                          ? "bg-[#FF6B35] text-white shadow-md shadow-[#FF6B35]/30"
+                          : "bg-[#16171B] text-[#9CA3AF] border border-[#2A2A2E] group-hover:border-[#FF6B35]/50 group-hover:text-white"
                       }`}
                     >
                       {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -92,7 +92,7 @@ export const FAQSection: React.FC = () => {
                   </div>
 
                   {isOpen && (
-                    <div className="mt-4 text-sm text-[#9A9AA2] leading-relaxed pr-10 animate-fade-in">
+                    <div className="mt-4 text-sm text-[#9CA3AF] leading-relaxed pr-10">
                       {faq.answer}
                     </div>
                   )}
@@ -105,3 +105,4 @@ export const FAQSection: React.FC = () => {
     </section>
   );
 };
+

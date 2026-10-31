@@ -32,7 +32,7 @@ export const KnowledgeGraphPreview: React.FC = () => {
       case "safety":
         return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-red-500/15 text-red-400 border border-red-500/20">SAFETY</span>;
       case "components":
-        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#6C4CF1]/20 text-[#C9B8FF] border border-[#6C4CF1]/30">COMPONENT</span>;
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#FF6B35]/20 text-[#FF6B35] border border-[#FF6B35]/30">COMPONENT</span>;
       case "procedures":
         return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/20">PROCEDURE</span>;
       case "tools":
@@ -47,7 +47,7 @@ export const KnowledgeGraphPreview: React.FC = () => {
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
           <div>
-            <span className="text-xs font-mono uppercase tracking-widest text-[#6C4CF1] font-semibold">
+            <span className="text-xs font-mono uppercase tracking-widest text-[#FF6B35] font-semibold">
               In-Memory Knowledge Graph
             </span>
             <h2 className="mt-4 text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
