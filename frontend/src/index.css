@@ -1,69 +1,157 @@
 @import "tailwindcss";
 
 :root {
-  --bg-main: #0B0B0E;
-  --bg-surface: #121316;
-  --bg-card: #16171B;
-  --border-card: #2A2A2E;
-  --accent-orange: #FF6B35;
-  --accent-orange-hover: #F97316;
-  --text-primary: #F5F5F7;
-  --text-muted: #9CA3AF;
+  --bg-dark: #101318;
+  --bg-charcoal: #171A21;
+  --bg-slate: #252B35;
+  --bg-elevated: #1F242D;
+  --primary-amber: #F2B544;
+  --amber-hover: #E5A835;
+  --text-white: #FFFFFF;
+  --text-light-grey: #F3F4F6;
+  --text-secondary: #929AA6;
+  --text-muted: #647082;
+  --border-slate: #252B35;
+  --border-subtle: #2D3440;
+  --border-highlight: #F2B544;
+
+  /* Semantic */
+  --status-success: #279C70;
+  --status-warning: #D99A29;
+  --status-error: #D94D4D;
 }
 
 body {
-  background-color: #0B0B0E;
-  color: #F5F5F7;
+  background-color: var(--bg-dark);
+  color: var(--text-light-grey);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
+}
+
+/* Light mode overrides */
+.light {
+  --bg-dark: #F8F9FA;
+  --bg-charcoal: #FFFFFF;
+  --bg-slate: #E9ECEF;
+  --bg-elevated: #F1F3F5;
+  --text-white: #101318;
+  --text-light-grey: #171A21;
+  --text-secondary: #495057;
+  --text-muted: #6C757D;
+  --border-slate: #DEE2E6;
+  --border-subtle: #CED4DA;
 }
 
 code, pre, .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Warm ambient radial glow */
-.radial-warm-hero {
-  background: radial-gradient(circle at 50% 30%, rgba(255, 107, 53, 0.14) 0%, rgba(11, 11, 14, 0) 65%);
+/* Industrial Grid Accents */
+.bg-industrial-grid {
+  background-image: radial-gradient(rgba(242, 181, 68, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
-.radial-warm-cta {
-  background: radial-gradient(circle at 50% 50%, rgba(255, 107, 53, 0.16) 0%, rgba(11, 11, 14, 0) 70%);
+.bg-industrial-dots {
+  background-image: radial-gradient(rgba(242, 181, 68, 0.14) 1px, transparent 1px);
+  background-size: 16px 16px;
 }
 
-/* Capacity-style card */
-.capacity-card {
-  background-color: #121316;
-  border: 1px solid #2A2A2E;
-  border-radius: 14px;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+/* Atmospheric Amber Accents */
+.radial-amber-glow {
+  background: radial-gradient(circle at 50% 20%, rgba(242, 181, 68, 0.15) 0%, rgba(242, 181, 68, 0.03) 40%, rgba(16, 19, 24, 0) 70%);
 }
 
-.capacity-card:hover {
-  border-color: #3F3F46;
+/* Primary Amber Button */
+.btn-amber-primary {
+  background-color: #F2B544;
+  color: #101318;
+  font-weight: 700;
+  border: 1px solid rgba(242, 181, 68, 0.8);
+  box-shadow: 0 2px 12px rgba(242, 181, 68, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Hairline dividers */
-.hairline-b {
-  border-bottom: 1px solid #2A2A2E;
+.btn-amber-primary:hover:not(:disabled) {
+  background-color: #E5A835;
+  box-shadow: 0 4px 20px rgba(242, 181, 68, 0.38);
+  transform: translateY(-1px);
 }
 
-.hairline-t {
-  border-top: 1px solid #2A2A2E;
+.btn-amber-primary:active:not(:disabled) {
+  transform: translateY(0);
 }
 
-/* Custom scrollbar */
+/* Secondary Slate Button with Amber Hover */
+.btn-slate-secondary {
+  background-color: #171A21;
+  border: 1px solid #252B35;
+  color: #F3F4F6;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-slate-secondary:hover:not(:disabled) {
+  border-color: #F2B544;
+  background-color: #252B35;
+  color: #FFFFFF;
+  box-shadow: 0 0 16px rgba(242, 181, 68, 0.15);
+  transform: translateY(-1px);
+}
+
+.btn-slate-secondary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Industrial Cards */
+.card-industrial {
+  background-color: #171A21;
+  border: 1px solid #252B35;
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-industrial:hover {
+  border-color: #353E4C;
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.4);
+}
+
+.card-industrial-interactive {
+  background-color: #171A21;
+  border: 1px solid #252B35;
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-industrial-interactive:hover {
+  border-color: #F2B544;
+  box-shadow: 0 8px 28px -6px rgba(242, 181, 68, 0.18);
+  transform: translateY(-2px);
+}
+
+/* Active Nav Pill */
+.nav-amber-active {
+  background: rgba(242, 181, 68, 0.12);
+  border-left: 3px solid #F2B544;
+  color: #F2B544;
+  font-weight: 600;
+}
+
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #0B0B0E;
+  background: #101318;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #2A2A2E;
+  background: #252B35;
   border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #3F3F46;
+  background: #353E4C;
 }

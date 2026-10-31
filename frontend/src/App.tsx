@@ -1,12 +1,21 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
-import { Navbar } from "./components/Navbar";
-import { CapacityFooter } from "./components/CapacityFooter";
-import { LandingPage } from "./pages/LandingPage";
-import { DiagnosticPage } from "./pages/DiagnosticPage";
-import { GraphPage } from "./pages/GraphPage";
-import { IngestPage } from "./pages/IngestPage";
+import { MecGProvider } from "./context/MecGContext";
+import { AppLayout } from "./components/layout/AppLayout";
+
+// MEC-G Complete Page Modules
+import { OverviewDashboard } from "./pages/OverviewDashboard";
+import { NotebooksPage } from "./pages/NotebooksPage";
+import { NotebookWorkspacePage } from "./pages/NotebookWorkspacePage";
+import { DiagnosePage } from "./pages/DiagnosePage";
+import { KnowledgeLibraryPage } from "./pages/KnowledgeLibraryPage";
+import { KnowledgeGraphPage } from "./pages/KnowledgeGraphPage";
+import { SearchDocumentsPage } from "./pages/SearchDocumentsPage";
+import { DiagnosticHistoryPage } from "./pages/DiagnosticHistoryPage";
 import { SafetyCompliancePage } from "./pages/SafetyCompliancePage";
+import { AuditTrailPage } from "./pages/AuditTrailPage";
+import { SettingsPage } from "./pages/SettingsPage";
+import { HelpSupportPage } from "./pages/HelpSupportPage";
 
 // Helper component to scroll to top on route change
 const ScrollToTopOnNavigate: React.FC = () => {
@@ -21,27 +30,39 @@ const ScrollToTopOnNavigate: React.FC = () => {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <ScrollToTopOnNavigate />
-      <div className="min-h-screen bg-[#0B0B0E] text-[#F5F5F7] flex flex-col font-sans selection:bg-[#FF6B35]/30 selection:text-white">
-        {/* Sticky Top Nav matching Capacity specification */}
-        <Navbar />
-
-        {/* Multi-Page Routes */}
-        <main className="flex-1">
+    <MecGProvider>
+      <BrowserRouter>
+        <ScrollToTopOnNavigate />
+        <AppLayout>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/diagnose" element={<DiagnosticPage />} />
-            <Route path="/graph" element={<GraphPage />} />
-            <Route path="/ingest" element={<IngestPage />} />
+            {/* WORKSPACE */}
+            <Route path="/" element={<OverviewDashboard />} />
+            <Route path="/notebooks" element={<NotebooksPage />} />
+            <Route path="/notebooks/:id" element={<NotebookWorkspacePage />} />
+            <Route path="/diagnose" element={<DiagnosePage />} />
+
+            {/* KNOWLEDGE */}
+            <Route path="/library" element={<KnowledgeLibraryPage />} />
+            <Route path="/graph" element={<KnowledgeGraphPage />} />
+            <Route path="/search" element={<SearchDocumentsPage />} />
+
+            {/* OPERATIONS */}
+            <Route path="/history" element={<DiagnosticHistoryPage />} />
             <Route path="/safety" element={<SafetyCompliancePage />} />
+            <Route path="/audit" element={<AuditTrailPage />} />
+
+            {/* SYSTEM */}
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/help" element={<HelpSupportPage />} />
+
+            {/* BACKWARD COMPATIBILITY ALIASES */}
+            <Route path="/ingest" element={<Navigate to="/library" replace />} />
+
+            {/* CATCH-ALL REDIRECT */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </main>
-
-        {/* Multi-column Capacity Footer */}
-        <CapacityFooter />
-      </div>
-    </BrowserRouter>
+        </AppLayout>
+      </BrowserRouter>
+    </MecGProvider>
   );
 }
