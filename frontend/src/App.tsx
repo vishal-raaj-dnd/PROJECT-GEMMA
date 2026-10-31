@@ -1,21 +1,14 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
-import { MecGProvider } from "./context/MecGContext";
-import { AppLayout } from "./components/layout/AppLayout";
 
-// MEC-G Complete Page Modules
-import { OverviewDashboard } from "./pages/OverviewDashboard";
-import { NotebooksPage } from "./pages/NotebooksPage";
-import { NotebookWorkspacePage } from "./pages/NotebookWorkspacePage";
-import { DiagnosePage } from "./pages/DiagnosePage";
-import { KnowledgeLibraryPage } from "./pages/KnowledgeLibraryPage";
-import { KnowledgeGraphPage } from "./pages/KnowledgeGraphPage";
-import { SearchDocumentsPage } from "./pages/SearchDocumentsPage";
-import { DiagnosticHistoryPage } from "./pages/DiagnosticHistoryPage";
+import { WorkspacePage } from "./pages/WorkspacePage";
+import { DiagnosticPage } from "./pages/DiagnosticPage";
+import { GraphPage } from "./pages/GraphPage";
+import { IngestPage } from "./pages/IngestPage";
 import { SafetyCompliancePage } from "./pages/SafetyCompliancePage";
-import { AuditTrailPage } from "./pages/AuditTrailPage";
-import { SettingsPage } from "./pages/SettingsPage";
-import { HelpSupportPage } from "./pages/HelpSupportPage";
+import { LandingPage } from "./pages/LandingPage";
+import { Navbar } from "./components/Navbar";
+import { CapacityFooter } from "./components/CapacityFooter";
 
 // Helper component to scroll to top on route change
 const ScrollToTopOnNavigate: React.FC = () => {
@@ -28,41 +21,79 @@ const ScrollToTopOnNavigate: React.FC = () => {
   return null;
 };
 
+// Layout wrapper for marketing & legacy diagnostic pages
+const StandardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <div className="min-h-screen bg-[#0B0D12] text-[#F5F7FF] flex flex-col font-sans selection:bg-[#8B5CF6]/30 selection:text-white">
+      <Navbar />
+      <main className="flex-1">{children}</main>
+      <CapacityFooter />
+    </div>
+  );
+};
+
 export default function App() {
   return (
-    <MecGProvider>
-      <BrowserRouter>
-        <ScrollToTopOnNavigate />
-        <AppLayout>
-          <Routes>
-            {/* WORKSPACE */}
-            <Route path="/" element={<OverviewDashboard />} />
-            <Route path="/notebooks" element={<NotebooksPage />} />
-            <Route path="/notebooks/:id" element={<NotebookWorkspacePage />} />
-            <Route path="/diagnose" element={<DiagnosePage />} />
+    <BrowserRouter>
+      <ScrollToTopOnNavigate />
+      <Routes>
+        {/* Primary AI Knowledge Workspace (NotebookLM 3-Panel Experience) */}
+        <Route path="/" element={<WorkspacePage />} />
+        <Route path="/workspace" element={<WorkspacePage />} />
 
-            {/* KNOWLEDGE */}
-            <Route path="/library" element={<KnowledgeLibraryPage />} />
-            <Route path="/graph" element={<KnowledgeGraphPage />} />
-            <Route path="/search" element={<SearchDocumentsPage />} />
+        {/* Dedicated Industrial Hardware Diagnostics, Safety, and Graph Pages */}
+        <Route
+          path="/diagnostics"
+          element={
+            <StandardLayout>
+              <DiagnosticPage />
+            </StandardLayout>
+          }
+        />
+        <Route
+          path="/diagnose"
+          element={
+            <StandardLayout>
+              <DiagnosticPage />
+            </StandardLayout>
+          }
+        />
+        <Route
+          path="/graph"
+          element={
+            <StandardLayout>
+              <GraphPage />
+            </StandardLayout>
+          }
+        />
+        <Route
+          path="/ingest"
+          element={
+            <StandardLayout>
+              <IngestPage />
+            </StandardLayout>
+          }
+        />
+        <Route
+          path="/safety"
+          element={
+            <StandardLayout>
+              <SafetyCompliancePage />
+            </StandardLayout>
+          }
+        />
+        <Route
+          path="/landing"
+          element={
+            <StandardLayout>
+              <LandingPage />
+            </StandardLayout>
+          }
+        />
 
-            {/* OPERATIONS */}
-            <Route path="/history" element={<DiagnosticHistoryPage />} />
-            <Route path="/safety" element={<SafetyCompliancePage />} />
-            <Route path="/audit" element={<AuditTrailPage />} />
-
-            {/* SYSTEM */}
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/help" element={<HelpSupportPage />} />
-
-            {/* BACKWARD COMPATIBILITY ALIASES */}
-            <Route path="/ingest" element={<Navigate to="/library" replace />} />
-
-            {/* CATCH-ALL REDIRECT */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </AppLayout>
-      </BrowserRouter>
-    </MecGProvider>
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

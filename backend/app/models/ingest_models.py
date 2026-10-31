@@ -6,6 +6,7 @@ class IngestFileItem(BaseModel):
     filename: str
     status: str = Field(description="compiled, cached, or failed")
     concepts_count: int = 0
+    node_paths: List[str] = Field(default_factory=list, description="Generated or cached OKF node relative paths")
     error_message: Optional[str] = None
 
 
@@ -18,4 +19,3 @@ class IngestResponse(BaseModel):
     output_directory: str
     file_details: List[IngestFileItem] = Field(default_factory=list)
     errors: List[str] = Field(default_factory=list)
-

@@ -122,6 +122,65 @@ class GemmaClient:
             logger.error("Gemma remediation synthesis failed: %s", e)
             return self._fallback_remediation_synthesis(component_name, defect)
 
+    async def generate_chat_stream(self, prompt: str, system_instruction: str):
+        """Streams conversational responses grounded in OKF knowledge."""
+        client = self._get_client()
+        if client:
+            try:
+                from google.genai import types
+                response_stream = client.models.generate_content_stream(
+                    model=self.model_name,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        system_instruction=system_instruction,
+                        temperature=0.2
+                    )
+                )
+                for chunk in response_stream:
+                    if chunk.text:
+                        yield chunk.text
+                return
+            except Exception as e:
+                logger.error("Gemma chat stream error, switching to deterministic responder: %s", e)
+
+        # Fallback generator for offline/local development
+        import asyncio
+        fallback_text = self._generate_fallback_chat_response(prompt)
+        # Yield words in chunks to simulate realistic token streaming
+        words = fallback_text.split(" ")
+        for i, word in enumerate(words):
+            chunk = word if i == len(words) - 1 else word + " "
+            yield chunk
+            await asyncio.sleep(0.015)
+
+    def _generate_fallback_chat_response(self, prompt: str) -> str:
+        p_lower = prompt.lower()
+        if "valve" in p_lower or "prv" in p_lower or "pressure" in p_lower or "seal" in p_lower:
+            return (
+                "Based on the **Industrial Machinery Knowledge Base** [^components/proportional_relief_valve_v2.md#overview], "
+                "the Proportional Pressure Relief Valve (PRV-992-B) regulates hydraulic flow up to 350 bar. "
+                "\n\n### Key Procedural Steps:\n"
+                "1. **Safety Interlock:** Before servicing, execute full hydraulic isolation and zero-pressure verification [^safety/lockout_tagout_hydraulics.md#lockout-tagout-protocol].\n"
+                "2. **Fastener Removal:** Use the specified Calibrated Torque Wrench [^tools/calibrated_torque_wrench.md#specifications] to avoid damaging mating flanges.\n"
+                "3. **Seal Replacement:** Remove extruded Viton O-ring, clean cavity with lint-free wipes, and re-torque mounting bolts in a diagonal pattern to 35 Nm [^procedures/valve_seal_replacement.md#reassembly-and-torque].\n\n"
+                "Verify post-maintenance zero weepage under 100% duty cycle testing."
+            )
+        elif "pcb" in p_lower or "pitch" in p_lower or "capacitor" in p_lower:
+            return (
+                "According to the **Pitch Controller Power Board manual** [^components/pcb_pitch_controller_v1.md#specifications], "
+                "the controller operates on a regulated 24V DC bus with 10A peak switching capability.\n\n"
+                "### Maintenance & Safety Requirements:\n"
+                "- **Arc Flash PPE:** Level 2 PPE is strictly required before opening the electrical enclosure [^safety/arc_flash_ppe_level2.md#protective-equipment].\n"
+                "- **Capacitor Discharge:** Ensure electrolytic filter capacitors (C14) are safely discharged using a 100Ω 25W ceramic discharge probe before probing.\n"
+                "- **Thermal Diagnostics:** Scorching near C14 indicates prolonged over-voltage or thermal dissipation breakdown."
+            )
+        return (
+            "Based on the indexed Open Knowledge Format (OKF) documentation, industrial systems require strict adherence "
+            "to lockout/tagout (LOTO) protocols [^safety/lockout_tagout_hydraulics.md#lockout-tagout-protocol] and verified torque specifications "
+            "prior to component disassembly [^tools/calibrated_torque_wrench.md#specifications].\n\n"
+            "Select specific sources from the sidebar to focus the knowledge context on your active machinery assembly."
+        )
+
     def _fallback_visual_analysis(self, query_text: Optional[str]) -> VisualFeatureExtraction:
         text = (query_text or "").lower()
         if "prv" in text or "valve" in text or "pressure" in text:

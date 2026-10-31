@@ -1,8 +1,9 @@
 import logging
 from typing import List, Dict, Any
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 
 from app.models.okf_models import OKFGraphStats, OKFNode
+from app.models.chat_models import ReactFlowGraphResponse
 from app.services.graph_engine import OKFGraphEngine
 from app.services.okf_compiler.indexer import build_raw_mermaid_graph
 
@@ -30,6 +31,35 @@ async def get_graph_statistics(engine: OKFGraphEngine = Depends(get_graph_engine
     return engine.get_stats()
 
 
+@router.get("/react-flow", response_model=ReactFlowGraphResponse)
+async def get_react_flow_graph(engine: OKFGraphEngine = Depends(get_graph_engine)):
+    """
+    Returns node and edge representations structured directly for @xyflow/react,
+    including coordinate positions, category metadata, and relationship types.
+    """
+    return engine.get_react_flow_graph()
+
+
+@router.get("/search")
+async def search_graph_nodes(
+    q: str = Query(..., min_length=1, description="Search query string"),
+    limit: int = Query(15, ge=1, le=50),
+    engine: OKFGraphEngine = Depends(get_graph_engine)
+) -> List[Dict[str, Any]]:
+    """Performs fuzzy and token-level search across all loaded OKF knowledge nodes."""
+    return engine.search_nodes(query=q, limit=limit)
+
+
+@router.get("/neighborhood/{node_path:path}")
+async def get_node_neighborhood(
+    node_path: str,
+    depth: int = Query(2, ge=1, le=4),
+    engine: OKFGraphEngine = Depends(get_graph_engine)
+) -> Dict[str, Any]:
+    """Retrieves subgraph nodes and edges centered around a target node within traversal depth."""
+    return engine.get_node_neighborhood(node_path=node_path, depth=depth)
+
+
 @router.get("/nodes")
 async def list_all_nodes(engine: OKFGraphEngine = Depends(get_graph_engine)) -> List[Dict[str, Any]]:
     """Returns a summary list of all nodes currently loaded in the knowledge graph."""
@@ -54,7 +84,6 @@ async def get_node_by_path(node_path: str, engine: OKFGraphEngine = Depends(get_
     clean_path = node_path.strip().lstrip("/")
     node = engine.nodes_by_path.get(clean_path)
     if not node:
-        # Try matching by filename stem
         for path, n in engine.nodes_by_path.items():
             if path.endswith(clean_path) or clean_path in path:
                 node = n
@@ -69,7 +98,6 @@ async def get_node_by_path(node_path: str, engine: OKFGraphEngine = Depends(get_
 @router.get("/mermaid")
 async def get_graph_mermaid(engine: OKFGraphEngine = Depends(get_graph_engine)) -> Dict[str, str]:
     """Returns the live Mermaid flowchart definition of the in-memory knowledge graph."""
-    # Convert nodes_by_path into format expected by indexer
     concepts_dict = {
         node.id: {
             "metadata": {
@@ -90,4 +118,3 @@ async def reload_graph(engine: OKFGraphEngine = Depends(get_graph_engine)):
     """Forces a refresh of the knowledge graph from disk."""
     engine.reload()
     return engine.get_stats()
-

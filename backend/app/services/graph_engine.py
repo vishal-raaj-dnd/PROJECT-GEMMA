@@ -97,7 +97,6 @@ class OKFGraphEngine:
                 self.graph.add_node(node.relative_path, data=node)
                 slug = Path(node.relative_path).stem
                 temp_slug_map[slug] = node.relative_path
-
                 for pn in node.frontmatter.part_numbers:
                     self.part_number_map[pn.strip().upper()] = node.relative_path
 
@@ -217,3 +216,156 @@ class OKFGraphEngine:
             category_counts=cats,
             is_indexed=self.graph.number_of_nodes() > 0
         )
+
+    def get_react_flow_graph(self) -> Dict[str, Any]:
+        """Returns node and edge representations formatted directly for @xyflow/react."""
+        nodes = []
+        category_order = ["components", "procedures", "safety", "tools", "fault_codes", "root"]
+
+        grouped_by_cat: Dict[str, List[OKFNode]] = {}
+        for node in self.nodes_by_path.values():
+            grouped_by_cat.setdefault(node.category, []).append(node)
+
+        cat_col = 0
+        for cat in category_order + [c for c in grouped_by_cat if c not in category_order]:
+            cat_nodes = grouped_by_cat.get(cat, [])
+            for row_idx, node in enumerate(cat_nodes):
+                x = cat_col * 280.0 + 50.0
+                y = row_idx * 160.0 + 50.0
+                nodes.append({
+                    "id": node.relative_path,
+                    "type": "conceptNode",
+                    "position": {"x": x, "y": y},
+                    "data": {
+                        "title": node.frontmatter.title,
+                        "category": node.category,
+                        "description": node.frontmatter.description or "",
+                        "tags": node.frontmatter.tags or [],
+                        "relativePath": node.relative_path,
+                        "partNumbers": node.frontmatter.part_numbers or [],
+                        "sourceDocumentIds": []
+                    }
+                })
+            if cat_nodes:
+                cat_col += 1
+
+        edges = []
+        for u, v, data in self.graph.edges(data=True):
+            edge_type = data.get("edge_type", "reference")
+            edges.append({
+                "id": f"e-{u}->{v}",
+                "source": u,
+                "target": v,
+                "type": "smoothstep",
+                "animated": edge_type == "safety_prerequisite",
+                "data": {
+                    "relationship": edge_type
+                }
+            })
+
+        stats = self.get_stats()
+        return {
+            "nodes": nodes,
+            "edges": edges,
+            "stats": {
+                "total_nodes": stats.total_nodes,
+                "total_edges": stats.total_edges,
+                "category_counts": stats.category_counts
+            }
+        }
+
+    def search_nodes(self, query: str, limit: int = 15) -> List[Dict[str, Any]]:
+        """Searches graph nodes by title, tags, description, and part numbers."""
+        q_lower = query.strip().lower()
+        if not q_lower:
+            return []
+
+        scored_nodes = []
+        for path, node in self.nodes_by_path.items():
+            score = 0.0
+            title_lower = node.frontmatter.title.lower()
+            desc_lower = (node.frontmatter.description or "").lower()
+
+            if q_lower == title_lower:
+                score += 100.0
+            elif q_lower in title_lower:
+                score += 50.0
+
+            for pn in node.frontmatter.part_numbers:
+                if q_lower == pn.lower():
+                    score += 90.0
+                elif q_lower in pn.lower():
+                    score += 45.0
+
+            for tag in node.frontmatter.tags:
+                if q_lower == tag.lower():
+                    score += 40.0
+                elif q_lower in tag.lower():
+                    score += 20.0
+
+            if q_lower in desc_lower:
+                score += 15.0
+
+            fuzz_score = fuzz.partial_ratio(q_lower, f"{title_lower} {desc_lower}")
+            if fuzz_score > 60:
+                score = max(score, float(fuzz_score))
+
+            if score > 20:
+                scored_nodes.append((score, node))
+
+        scored_nodes.sort(key=lambda x: x[0], reverse=True)
+        return [
+            {
+                "id": node.relative_path,
+                "relative_path": node.relative_path,
+                "category": node.category,
+                "title": node.frontmatter.title,
+                "description": node.frontmatter.description,
+                "tags": node.frontmatter.tags,
+                "score": score
+            }
+            for score, node in scored_nodes[:limit]
+        ]
+
+    def get_node_neighborhood(self, node_path: str, depth: int = 2) -> Dict[str, Any]:
+        """Returns nodes and edges within a given neighborhood depth."""
+        clean_path = node_path.strip().lstrip("/")
+        if clean_path not in self.nodes_by_path:
+            for p in self.nodes_by_path:
+                if p.endswith(clean_path) or Path(p).stem == Path(clean_path).stem:
+                    clean_path = p
+                    break
+
+        connected_nodes = self.get_connected_subgraph_nodes(clean_path, max_depth=depth)
+        connected_paths = {n.relative_path for n in connected_nodes}
+
+        nodes = []
+        for idx, node in enumerate(connected_nodes):
+            nodes.append({
+                "id": node.relative_path,
+                "type": "conceptNode",
+                "position": {"x": (idx % 3) * 260.0 + 50.0, "y": (idx // 3) * 160.0 + 50.0},
+                "data": {
+                    "title": node.frontmatter.title,
+                    "category": node.category,
+                    "description": node.frontmatter.description or "",
+                    "tags": node.frontmatter.tags or [],
+                    "relativePath": node.relative_path,
+                    "partNumbers": node.frontmatter.part_numbers or [],
+                    "sourceDocumentIds": []
+                }
+            })
+
+        edges = []
+        for u, v, data in self.graph.edges(data=True):
+            if u in connected_paths and v in connected_paths:
+                edges.append({
+                    "id": f"e-{u}->{v}",
+                    "source": u,
+                    "target": v,
+                    "type": "smoothstep",
+                    "animated": False,
+                    "data": {"relationship": data.get("edge_type", "reference")}
+                })
+
+        return {"nodes": nodes, "edges": edges, "center_node": clean_path}

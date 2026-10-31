@@ -6,11 +6,11 @@ Structured graph index of all available equipment, safety protocols, and repair 
 
 ```mermaid
 graph TD
-    node_pitchbatteryspec["Pitch Battery Spec"]
+    node_backenddevelopmentcurriculumoverview["Backend Development and Data Science Curriculum Overview"]
 ```
 
 ## Catalog by Category
 
-### Specification
+### Component
 
-- **[Pitch Battery Spec](./specification/pitch-battery-spec.md)** - Nominal voltage is 48V DC. *(specification, fieldops)*
+- **[Backend Development and Data Science Curriculum Overview](./component/backend-development-curriculum-overview.md)** - A comprehensive list of examination topics covering backend development, algorithms, data structures, data science, statistics, and AI ethics. *(curriculum, exam-topics, backend-development, data-science, computer-science)*

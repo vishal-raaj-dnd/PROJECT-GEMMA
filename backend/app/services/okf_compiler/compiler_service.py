@@ -20,7 +20,7 @@ class OKFCompilerService:
     def __init__(self, output_dir: str):
         self.output_dir = output_dir
 
-    def compile_files(self, filepaths: List[str]) -> IngestResponse:
+    def compile_files(self, filepaths: List[str], force: bool = False) -> IngestResponse:
         start_time = time.time()
         manifest = load_manifest(self.output_dir)
         file_items: List[IngestFileItem] = []
@@ -43,39 +43,51 @@ class OKFCompilerService:
 
             try:
                 current_hash = calculate_file_hash(fp)
-                if filename in manifest and manifest[filename].get("hash") == current_hash:
-                    logger.info("Skipping cached file: %s", filename)
-                    file_items.append(IngestFileItem(filename=filename, status="cached", concepts_count=0))
+                if not force and filename in manifest and manifest[filename].get("hash") == current_hash and manifest[filename].get("node_paths"):
+                    cached_paths = manifest[filename].get("node_paths", [])
+                    logger.info("Skipping cached file: %s (%d nodes)", filename, len(cached_paths))
+                    file_items.append(IngestFileItem(
+                        filename=filename,
+                        status="cached",
+                        concepts_count=len(cached_paths),
+                        node_paths=cached_paths
+                    ))
                     continue
 
                 raw_md = read_file_to_markdown(fp)
                 chunks = split_markdown(raw_md, split_level="##")
 
                 file_concepts_count = 0
+                file_node_paths: List[str] = []
                 for chunk in chunks:
                     header = chunk["header"]
                     body = chunk["content"]
                     meta, cleaned_body = extract_metadata(body, header, concept_idx)
 
                     concept_id = f"{meta['type']}_{meta['filename']}"
+                    node_rel_path = f"{meta['type']}/{meta['filename']}.md"
                     all_concepts[concept_id] = {
                         "metadata": meta,
                         "content": cleaned_body,
-                        "source_file": filename
+                        "source_file": filename,
+                        "relative_path": node_rel_path
                     }
+                    file_node_paths.append(node_rel_path)
                     concept_idx += 1
                     file_concepts_count += 1
 
                 manifest[filename] = {
                     "hash": current_hash,
                     "compiled_at": time.time(),
-                    "concepts_count": file_concepts_count
+                    "concepts_count": file_concepts_count,
+                    "node_paths": file_node_paths
                 }
 
                 file_items.append(IngestFileItem(
                     filename=filename,
                     status="compiled",
-                    concepts_count=file_concepts_count
+                    concepts_count=file_concepts_count,
+                    node_paths=file_node_paths
                 ))
 
             except Exception as e:
@@ -104,4 +116,3 @@ class OKFCompilerService:
             file_details=file_items,
             errors=errors
         )
-

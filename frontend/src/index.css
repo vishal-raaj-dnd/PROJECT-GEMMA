@@ -1,6 +1,25 @@
 @import "tailwindcss";
+@import "katex/dist/katex.min.css";
+@import "@xyflow/react/dist/style.css";
 
 :root {
+  /* Exact NotebookLM / MECH-G Color System */
+  --bg-root: #0B0B0C;
+  --bg-island: #18181A;
+  --bg-island-surface: #1E1F23;
+  --bg-island-elevated: #24252B;
+  --border-island: #27272A;
+  --border-subtle: #2E3036;
+
+  --text-primary: #F4F4F5;
+  --text-secondary: #9CA3AF;
+  --text-muted: #71717A;
+
+  --accent-blue: #3B82F6;
+  --accent-purple: #8B5CF6;
+  --accent-cyan: #22D3EE;
+
+  /* Industrial Diagnostics Semantic Colors */
   --bg-dark: #101318;
   --bg-charcoal: #171A21;
   --bg-slate: #252B35;
@@ -9,42 +28,56 @@
   --amber-hover: #E5A835;
   --text-white: #FFFFFF;
   --text-light-grey: #F3F4F6;
-  --text-secondary: #929AA6;
-  --text-muted: #647082;
   --border-slate: #252B35;
-  --border-subtle: #2D3440;
   --border-highlight: #F2B544;
 
-  /* Semantic */
   --status-success: #279C70;
   --status-warning: #D99A29;
   --status-error: #D94D4D;
+
+  /* Legacy aliases for backward compatibility */
+  --bg-main: #0B0B0C;
+  --bg-surface: #18181A;
+  --bg-secondary: #1E1F23;
 }
 
 body {
-  background-color: var(--bg-dark);
-  color: var(--text-light-grey);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  overflow-x: hidden;
-  letter-spacing: -0.01em;
+  background-color: var(--bg-root);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Light mode overrides */
-.light {
-  --bg-dark: #F8F9FA;
-  --bg-charcoal: #FFFFFF;
-  --bg-slate: #E9ECEF;
-  --bg-elevated: #F1F3F5;
-  --text-white: #101318;
-  --text-light-grey: #171A21;
-  --text-secondary: #495057;
-  --text-muted: #6C757D;
-  --border-slate: #DEE2E6;
-  --border-subtle: #CED4DA;
+/* NotebookLM Floating Island Styling */
+.notebooklm-island {
+  background-color: #18181A;
+  border: 1px solid #27272A;
+  border-radius: 24px;
 }
 
-code, pre, .font-mono {
-  font-family: 'JetBrains Mono', monospace;
+.notebooklm-pill {
+  border-radius: 9999px;
+  background-color: #232326;
+  border: 1px solid #2E2E33;
+}
+
+.notebooklm-pill:hover {
+  background-color: #2A2A2F;
+}
+
+/* Floating bottom composer */
+.notebooklm-composer {
+  background-color: #1E1F23;
+  border: 1px solid #2E3036;
+  border-radius: 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.notebooklm-composer:focus-within {
+  border-color: #4B4D56;
 }
 
 /* Industrial Grid Accents */
@@ -63,7 +96,7 @@ code, pre, .font-mono {
   background: radial-gradient(circle at 50% 20%, rgba(242, 181, 68, 0.15) 0%, rgba(242, 181, 68, 0.03) 40%, rgba(16, 19, 24, 0) 70%);
 }
 
-/* Primary Amber Button */
+/* Buttons */
 .btn-amber-primary {
   background-color: #F2B544;
   color: #101318;
@@ -79,11 +112,6 @@ code, pre, .font-mono {
   transform: translateY(-1px);
 }
 
-.btn-amber-primary:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-/* Secondary Slate Button with Amber Hover */
 .btn-slate-secondary {
   background-color: #171A21;
   border: 1px solid #252B35;
@@ -99,10 +127,6 @@ code, pre, .font-mono {
   transform: translateY(-1px);
 }
 
-.btn-slate-secondary:active:not(:disabled) {
-  transform: translateY(0);
-}
-
 /* Industrial Cards */
 .card-industrial {
   background-color: #171A21;
@@ -116,42 +140,31 @@ code, pre, .font-mono {
   box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.4);
 }
 
-.card-industrial-interactive {
-  background-color: #171A21;
-  border: 1px solid #252B35;
-  border-radius: 12px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+/* React Flow Dark Canvas overrides matching mindmap screenshot */
+.react-flow__background {
+  background-color: #16171B !important;
+  border-radius: 18px !important;
 }
 
-.card-industrial-interactive:hover {
-  border-color: #F2B544;
-  box-shadow: 0 8px 28px -6px rgba(242, 181, 68, 0.18);
-  transform: translateY(-2px);
-}
-
-/* Active Nav Pill */
-.nav-amber-active {
-  background: rgba(242, 181, 68, 0.12);
-  border-left: 3px solid #F2B544;
-  color: #F2B544;
-  font-weight: 600;
+.react-flow__pane {
+  border-radius: 18px !important;
 }
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #101318;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #252B35;
+  background: #2E2E33;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #353E4C;
+  background: #3E3E46;
 }
