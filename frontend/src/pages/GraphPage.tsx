@@ -47,3 +47,4 @@ export const GraphPage: React.FC = () => {
     </div>
   );
 };
+

@@ -16,12 +16,40 @@ export const DiagnosticWorkbench: React.FC = () => {
   const [result, setResult] = useState<DiagnosticResponse | null>(null);
   const [selectedCitation, setSelectedCitation] = useState<CitationVerification | null>(null);
 
-  const handleSelectSample = (sample: SampleQueryItem) => {
+  // Pre-load initial sample image as File object so it transmits real bytes to backend
+  React.useEffect(() => {
+    const preload = async () => {
+      try {
+        const res = await fetch(SAMPLE_QUERIES[0].imagePath);
+        if (res.ok) {
+          const blob = await res.blob();
+          const file = new File([blob], "sample_valve_leak.webp", { type: blob.type || "image/webp" });
+          setImageFile(file);
+        }
+      } catch (err) {
+        console.warn("Could not preload sample image file:", err);
+      }
+    };
+    preload();
+  }, []);
+
+  const handleSelectSample = async (sample: SampleQueryItem) => {
     setActiveSampleId(sample.id);
     setSelectedImage(sample.imagePath);
-    setImageFile(null);
     setQueryText(sample.queryText);
     setResult(null);
+
+    try {
+      const res = await fetch(sample.imagePath);
+      if (res.ok) {
+        const blob = await res.blob();
+        const filename = sample.imagePath.split("/").pop() || "sample.webp";
+        const file = new File([blob], filename, { type: blob.type || "image/webp" });
+        setImageFile(file);
+      }
+    } catch {
+      setImageFile(null);
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

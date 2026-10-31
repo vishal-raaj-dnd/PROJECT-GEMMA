@@ -239,3 +239,4 @@ export const SafetyCompliancePage: React.FC = () => {
     </div>
   );
 };
+

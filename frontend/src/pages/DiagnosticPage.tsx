@@ -48,3 +48,4 @@ export const DiagnosticPage: React.FC = () => {
     </div>
   );
 };
+

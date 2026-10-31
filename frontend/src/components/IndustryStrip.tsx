@@ -29,3 +29,4 @@ export const IndustryStrip: React.FC = () => {
     </section>
   );
 };
+

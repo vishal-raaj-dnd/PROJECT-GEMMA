@@ -64,3 +64,4 @@ export const TestimonialBand: React.FC = () => {
     </section>
   );
 };
+

@@ -47,3 +47,4 @@ export const IngestPage: React.FC = () => {
     </div>
   );
 };
+

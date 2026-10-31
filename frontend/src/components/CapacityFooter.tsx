@@ -132,3 +132,4 @@ export const CapacityFooter: React.FC = () => {
     </footer>
   );
 };
+

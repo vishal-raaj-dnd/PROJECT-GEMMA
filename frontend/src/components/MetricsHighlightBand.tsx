@@ -46,3 +46,4 @@ export const MetricsHighlightBand: React.FC = () => {
     </section>
   );
 };
+
