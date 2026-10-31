@@ -26,3 +26,4 @@ frontend/.env.local
 # Temporary / OS
 .DS_Store
 Thumbs.db
+backend/data/raw_docs/

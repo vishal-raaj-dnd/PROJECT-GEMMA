@@ -1,7 +1,8 @@
 import { DiagnosticResponse, OKFNodeSummary, GraphStats } from "../types/diagnostic";
 import { SAMPLE_QUERIES, INITIAL_GRAPH_NODES, INITIAL_GRAPH_STATS } from "../data/sampleData";
 
-const API_BASE = "http://localhost:8000";
+// Dynamic API base: uses VITE_API_URL if configured, otherwise falls back to relative path (Vercel proxy/rewrites)
+const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 export class ApiService {
   static async checkHealth(): Promise<{ online: boolean; message: string }> {
