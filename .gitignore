@@ -10,11 +10,19 @@ __pycache__/
 *.pytest_cache/
 .pytest_cache/
 
+# Node & Frontend
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+untitled.zip
+
 # Local Environment Variables
 .env
 backend/.env
+frontend/.env
+frontend/.env.local
 
 # Temporary / OS
 .DS_Store
 Thumbs.db
-
